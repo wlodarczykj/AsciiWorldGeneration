@@ -3,13 +3,17 @@ import sys
 from PIL import Image, ImageDraw, ImageFont
 
 #Settings
-PROB_DROP = 70
-INITIAL_CORE = 20
+PROB_DROP = 60
+INITIAL_CORE = 25
 MAX_MAP_SIZE = 100
 
 #Image Settings
-IMAGE_SIZE = 1000
-FONT_SIZE = 20
+FONT_SIZE = 15
+IMAGE_SIZE = 10 + MAX_MAP_SIZE*(FONT_SIZE)
+COLOR_KEY ={
+    '~' : (0,0,255,255),
+    '.' : (0,255,0,255)
+}
 
 fullMap = [[0 for x in range(0,MAX_MAP_SIZE)] for y in range(0,MAX_MAP_SIZE)]
 prettyMap = [[0 for x in range(0,MAX_MAP_SIZE)] for y in range(0,MAX_MAP_SIZE)]
@@ -30,13 +34,13 @@ def makeImage(matrix):
     for x in range(0, MAX_MAP_SIZE):
         for y in range(0, MAX_MAP_SIZE):
             # draw text, full opacity
-            d.text((10 + y*(FONT_SIZE) ,10 + x*(FONT_SIZE)), matrix[x][y], font=fnt, fill=(255,255,255,255))
+            d.text((10 + y*(FONT_SIZE), 10 + x*(FONT_SIZE)), matrix[x][y], font=fnt, fill=COLOR_KEY[matrix[x][y]])
 
     txt.show()
 
 def generateMap(core):
-    startX = random.randint(0,9)
-    startY = random.randint(0,9)
+    startX = random.randint(0,MAX_MAP_SIZE-1)
+    startY = random.randint(0,MAX_MAP_SIZE-1)
 
     #place the core
     fullMap[startX][startY] = core
