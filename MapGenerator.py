@@ -1,23 +1,30 @@
 import random
+import sys
+import pillow
 
 #Settings
-PROB_DROP = 60
-INITIAL_CORE = 4
+PROB_DROP = 45
+INITIAL_CORE = 20
+MIN_MAP_SIZE = 0
+MAX_MAP_SIZE = 1000
 
-fullMap = [[0 for x in range(0,100)] for y in range(0,100)]
-prettyMap = [[0 for x in range(0,100)] for y in range(0,100)]
-trackerMap = [[0 for x in range(0,100)] for y in range(0,100)]
+fullMap = [[0 for x in range(MIN_MAP_SIZE,MAX_MAP_SIZE)] for y in range(MIN_MAP_SIZE,MAX_MAP_SIZE)]
+prettyMap = [[0 for x in range(MIN_MAP_SIZE,MAX_MAP_SIZE)] for y in range(MIN_MAP_SIZE,MAX_MAP_SIZE)]
+trackerMap = [[0 for x in range(MIN_MAP_SIZE,MAX_MAP_SIZE)] for y in range(MIN_MAP_SIZE,MAX_MAP_SIZE)]
 
 def prettyPrintMap(matrix):
     s = [[str(e) for e in row] for row in matrix]
     lens = [max(map(len, col)) for col in zip(*s)]
     fmt = ''.join('{{:{}}}'.format(x) for x in lens)
     table = [fmt.format(*row) for row in s]
-    print '\n'.join(table)
+    #print '\n'.join(table)
+    f1=open('testfile.txt', 'w+')
+    print >> f1, '\n'.join(table)
+
 
 def generateMap(core):
-    startX = random.randint(10,100)
-    startY = random.randint(10,100)
+    startX = random.randint(10,90)
+    startY = random.randint(10,90)
 
     #place the core
     fullMap[startX][startY] = core
@@ -57,6 +64,8 @@ def genMapRec(newX, newY, prevVal):
             genMapRec(newX, newY - 1, newVal)
     else:
         return
+
+sys.setrecursionlimit(5000)
 
 result = generateMap(INITIAL_CORE)
 i = 0
