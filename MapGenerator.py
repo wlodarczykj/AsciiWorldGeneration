@@ -4,7 +4,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 #Settings
 PROB_DROP = 65
-INITIAL_CORE = 1
+INITIAL_CORE = 5
 MAX_MAP_SIZE = 100
 
 #Image Settings
@@ -37,6 +37,7 @@ def makeImage(matrix):
             d.text((10 + y*(FONT_SIZE), 10 + x*(FONT_SIZE)), matrix[x][y], font=fnt, fill=COLOR_KEY[matrix[x][y]])
 
     txt.show()
+    txt.save("result.bmp")
 
 def generateMap(core):
     startX = random.randint(10,MAX_MAP_SIZE-10)
