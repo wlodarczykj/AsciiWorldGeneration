@@ -1,2 +1,2 @@
 # AsciiWorldGeneration
-A python implementation to randomly generate worlds much like Dwarf Fortress. 
+A Python implementation to randomly generate worlds much like Dwarf Fortress.

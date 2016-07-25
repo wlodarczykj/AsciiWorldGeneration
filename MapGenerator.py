@@ -3,8 +3,8 @@ import sys
 from PIL import Image, ImageDraw, ImageFont
 
 #Settings
-PROB_DROP = 60
-INITIAL_CORE = 25
+PROB_DROP = 65
+INITIAL_CORE = 1
 MAX_MAP_SIZE = 100
 
 #Image Settings
@@ -17,7 +17,8 @@ COLOR_KEY ={
 
 fullMap = [[0 for x in range(0,MAX_MAP_SIZE)] for y in range(0,MAX_MAP_SIZE)]
 prettyMap = [[0 for x in range(0,MAX_MAP_SIZE)] for y in range(0,MAX_MAP_SIZE)]
-trackerMap = [[0 for x in range(0,MAX_MAP_SIZE)] for y in range(0,MAX_MAP_SIZE)]
+
+processList = []
 
 def prettyPrintMap(matrix):
     s = [[str(e) for e in row] for row in matrix]
@@ -25,7 +26,6 @@ def prettyPrintMap(matrix):
     fmt = ''.join('{{:{}}}'.format(x) for x in lens)
     table = [fmt.format(*row) for row in s]
     print ('\n'.join(table))
-    #print >> f1, '\n'.join(table)
 
 def makeImage(matrix):
     txt = Image.new('RGBA', (IMAGE_SIZE,IMAGE_SIZE), (0,0,0,0))
@@ -39,49 +39,43 @@ def makeImage(matrix):
     txt.show()
 
 def generateMap(core):
-    startX = random.randint(0,MAX_MAP_SIZE-1)
-    startY = random.randint(0,MAX_MAP_SIZE-1)
+    startX = random.randint(10,MAX_MAP_SIZE-10)
+    startY = random.randint(10,MAX_MAP_SIZE-10)
 
-    #place the core
+    debugNum = 0
+    #Place the core of the landmass and add it to our work list
     fullMap[startX][startY] = core
-    if startX + 1 < len(trackerMap) and trackerMap[startX + 1][startY] == 0:
-        genMapRec(startX + 1, startY, core)
-    if startX - 1 >= 0 and trackerMap[startX - 1][startY] == 0:
-        genMapRec(startX - 1, startY, core)
-    if startY + 1 < len(trackerMap[0]) and trackerMap[startX][startY + 1] == 0:
-        genMapRec(startX, startY + 1, core)
-    if startY - 1 >= 0 and trackerMap[startX][startY - 1] == 0:
-        genMapRec(startX, startY - 1, core)
+    processList = [(startX - 1, startY, core), (startX + 1, startY, core), (startX, startY - 1, core), (startX, startY + 1, core)]
 
-def genMapRec(newX, newY, prevVal):
-    newVal = 0
-    #If another iteration already occupied this slot.
-    if newX >= len(fullMap) or newY >= len(fullMap[0]):
-        return
-    if fullMap[newX][newY] != 0:
-        return
+    #Trick to avoid recursion, basically instead of the stack keeping track of the work to do, processList will.
+    while(len(processList) > 0):
+        newVal = 0
+        debugNum = debugNum + 1
 
-    trackerMap[newX][newY] = 1
+        #extract the info from the processList using meaningful names
+        newX = processList[0][0]
+        newY = processList[0][1]
+        prevVal = processList[0][2]
 
-    if random.randint(0,100) < PROB_DROP:
-        newVal = prevVal - 1
-    else:
-        newVal = prevVal
+        if random.randint(0,100) < PROB_DROP:
+            newVal = prevVal - 1
+        else:
+            newVal = prevVal
 
-    if newVal != 0:
-        fullMap[newX][newY] = newVal
-        if newX + 1 < len(fullMap):
-            genMapRec(newX + 1, newY, newVal)
-        if newX - 1 >= 0:
-            genMapRec(newX - 1, newY, newVal)
-        if newY + 1 < len(fullMap):
-            genMapRec(newX, newY + 1, newVal)
-        if newY - 1 >= 0:
-            genMapRec(newX, newY - 1, newVal)
-    else:
-        return
+        if newVal > 0:
+            fullMap[newX][newY] = newVal
+            if newX + 1 < len(fullMap) and fullMap[newX + 1][newY] == 0:
+                processList.append((newX + 1, newY, newVal))
+            if newX - 1 >= 0 and fullMap[newX - 1][newY] == 0:
+                processList.append((newX - 1, newY, newVal))
+            if newY + 1 < len(fullMap) and fullMap[newX ][newY + 1] == 0:
+                processList.append((newX, newY + 1, newVal))
+            if newY - 1 >= 0 and fullMap[newX][newY - 1] == 0:
+                processList.append((newX, newY - 1, newVal))
 
-sys.setrecursionlimit(5000)
+        processList.pop(0)
+        #print (len(processList))
+    print(debugNum)
 
 result = generateMap(INITIAL_CORE)
 i = 0
