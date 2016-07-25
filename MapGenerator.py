@@ -1,30 +1,42 @@
 import random
 import sys
-import pillow
+from PIL import Image, ImageDraw, ImageFont
 
 #Settings
-PROB_DROP = 45
+PROB_DROP = 70
 INITIAL_CORE = 20
-MIN_MAP_SIZE = 0
-MAX_MAP_SIZE = 1000
+MAX_MAP_SIZE = 100
 
-fullMap = [[0 for x in range(MIN_MAP_SIZE,MAX_MAP_SIZE)] for y in range(MIN_MAP_SIZE,MAX_MAP_SIZE)]
-prettyMap = [[0 for x in range(MIN_MAP_SIZE,MAX_MAP_SIZE)] for y in range(MIN_MAP_SIZE,MAX_MAP_SIZE)]
-trackerMap = [[0 for x in range(MIN_MAP_SIZE,MAX_MAP_SIZE)] for y in range(MIN_MAP_SIZE,MAX_MAP_SIZE)]
+#Image Settings
+IMAGE_SIZE = 1000
+FONT_SIZE = 20
+
+fullMap = [[0 for x in range(0,MAX_MAP_SIZE)] for y in range(0,MAX_MAP_SIZE)]
+prettyMap = [[0 for x in range(0,MAX_MAP_SIZE)] for y in range(0,MAX_MAP_SIZE)]
+trackerMap = [[0 for x in range(0,MAX_MAP_SIZE)] for y in range(0,MAX_MAP_SIZE)]
 
 def prettyPrintMap(matrix):
     s = [[str(e) for e in row] for row in matrix]
     lens = [max(map(len, col)) for col in zip(*s)]
     fmt = ''.join('{{:{}}}'.format(x) for x in lens)
     table = [fmt.format(*row) for row in s]
-    #print '\n'.join(table)
-    f1=open('testfile.txt', 'w+')
-    print >> f1, '\n'.join(table)
+    print ('\n'.join(table))
+    #print >> f1, '\n'.join(table)
 
+def makeImage(matrix):
+    txt = Image.new('RGBA', (IMAGE_SIZE,IMAGE_SIZE), (0,0,0,0))
+    fnt = ImageFont.truetype('Font/Roboto-black.ttf', FONT_SIZE)
+    d = ImageDraw.Draw(txt)
+    for x in range(0, MAX_MAP_SIZE):
+        for y in range(0, MAX_MAP_SIZE):
+            # draw text, full opacity
+            d.text((10 + y*(FONT_SIZE) ,10 + x*(FONT_SIZE)), matrix[x][y], font=fnt, fill=(255,255,255,255))
+
+    txt.show()
 
 def generateMap(core):
-    startX = random.randint(10,90)
-    startY = random.randint(10,90)
+    startX = random.randint(0,9)
+    startY = random.randint(0,9)
 
     #place the core
     fullMap[startX][startY] = core
@@ -73,12 +85,13 @@ for x in fullMap:
     j = 0
     for y in x:
         if y > 0:
-            prettyMap[i][j] = "."
+            prettyMap[i][j] = '.'
         else:
-            prettyMap[i][j] = "~"
+            prettyMap[i][j] = '~'
         j = j + 1
     i = i + 1
 
-prettyPrintMap(fullMap)
-print ""
+#prettyPrintMap(fullMap)
+print("")
 prettyPrintMap(prettyMap)
+makeImage(prettyMap)
