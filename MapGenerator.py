@@ -3,8 +3,8 @@ import sys
 from PIL import Image, ImageDraw, ImageFont
 
 #Settings
-PROB_DROP = 65
-INITIAL_CORE = 5
+PROB_DROP = 60
+INITIAL_CORE = 9
 MAX_MAP_SIZE = 100
 
 #Image Settings
@@ -34,7 +34,11 @@ def makeImage(matrix):
     for x in range(0, MAX_MAP_SIZE):
         for y in range(0, MAX_MAP_SIZE):
             # draw text, full opacity
-            d.text((10 + y*(FONT_SIZE), 10 + x*(FONT_SIZE)), matrix[x][y], font=fnt, fill=COLOR_KEY[matrix[x][y]])
+            if matrix[x][y] == 0:
+                d.text((10 + y*(FONT_SIZE), 10 + x*(FONT_SIZE)), str(matrix[x][y]), font=fnt, fill=(0,0,255,255))
+            else:
+                d.text((10 + y*(FONT_SIZE), 10 + x*(FONT_SIZE)), str(matrix[x][y]), font=fnt, fill=(0,255,0,255))
+
 
     txt.show()
     txt.save("result.bmp")
@@ -50,21 +54,15 @@ def generateMap(core):
 
     #Trick to avoid recursion, basically instead of the stack keeping track of the work to do, processList will.
     while(len(processList) > 0):
-        newVal = 0
         debugNum = debugNum + 1
         #print(debugNum)
 
         #extract the info from the processList using meaningful names
         newX = processList[0][0]
         newY = processList[0][1]
-        prevVal = processList[0][2]
+        newVal = processList[0][2]
 
-        if random.randint(0,100) < PROB_DROP:
-            newVal = prevVal - 1
-        else:
-            newVal = prevVal
-
-        if newVal > 0:
+        if newVal > 0 and fullMap[newX][newY] == 0:
             fullMap[newX][newY] = newVal
             if newX + 1 < len(fullMap) and fullMap[newX + 1][newY] == 0:
                 nextValue = spreadLand(newVal)
@@ -109,4 +107,4 @@ for x in fullMap:
 #prettyPrintMap(fullMap)
 print("")
 prettyPrintMap(prettyMap)
-makeImage(prettyMap)
+makeImage(fullMap)
