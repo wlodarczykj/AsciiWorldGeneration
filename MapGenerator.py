@@ -3,8 +3,8 @@ import sys
 from PIL import Image, ImageDraw, ImageFont
 
 #Settings
-PROB_DROP = 65
-INITIAL_CORE = 1
+PROB_DROP = 45
+INITIAL_CORE = 10
 MAX_MAP_SIZE = 100
 
 #Image Settings
@@ -45,12 +45,13 @@ def generateMap(core):
     debugNum = 0
     #Place the core of the landmass and add it to our work list
     fullMap[startX][startY] = core
-    processList = [(startX - 1, startY, core), (startX + 1, startY, core), (startX, startY - 1, core), (startX, startY + 1, core)]
+    processList = [(startX - 1, startY, spreadLand(core)), (startX + 1, startY, spreadLand(core)), (startX, startY - 1, spreadLand(core)), (startX, startY + 1, spreadLand(core))]
 
     #Trick to avoid recursion, basically instead of the stack keeping track of the work to do, processList will.
     while(len(processList) > 0):
         newVal = 0
         debugNum = debugNum + 1
+        #print(debugNum)
 
         #extract the info from the processList using meaningful names
         newX = processList[0][0]
@@ -65,17 +66,32 @@ def generateMap(core):
         if newVal > 0:
             fullMap[newX][newY] = newVal
             if newX + 1 < len(fullMap) and fullMap[newX + 1][newY] == 0:
-                processList.append((newX + 1, newY, newVal))
+                nextValue = spreadLand(newVal)
+                if nextValue > 0 and fullMap[newX + 1][newY] == 0:
+                    processList.append((newX + 1, newY, nextValue))
             if newX - 1 >= 0 and fullMap[newX - 1][newY] == 0:
-                processList.append((newX - 1, newY, newVal))
+                nextValue = spreadLand(newVal)
+                if nextValue > 0 and fullMap[newX - 1][ newY] == 0:
+                    processList.append((newX - 1, newY, nextValue))
             if newY + 1 < len(fullMap) and fullMap[newX ][newY + 1] == 0:
-                processList.append((newX, newY + 1, newVal))
+                nextValue = spreadLand(newVal)
+                if nextValue > 0 and fullMap[newX][ newY + 1] == 0:
+                    processList.append((newX, newY + 1, nextValue))
             if newY - 1 >= 0 and fullMap[newX][newY - 1] == 0:
-                processList.append((newX, newY - 1, newVal))
+                nextValue = spreadLand(newVal)
+                if nextValue > 0 and fullMap[newX][ newY - 1] == 0:
+                    processList.append((newX, newY - 1, nextValue))
 
         processList.pop(0)
-        #print (len(processList))
+        print (len(processList))
+
     print(debugNum)
+
+def spreadLand(oldVal):
+    if random.randint(0,100) < PROB_DROP:
+        return oldVal - 1
+    else:
+        return oldVal
 
 result = generateMap(INITIAL_CORE)
 i = 0
