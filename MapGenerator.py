@@ -1,23 +1,41 @@
+#########
+#
+#   This project is purely for training purposes, and use of it is free to anyone
+#
+#   Author: Jakub Wlodarczyk
+#
+#   TODO:
+#       1. Need to refactor.
+#       2. Need to Move this logic to a class and have a driver outside
+#       3. Need to Move river generation logic out as well.
+#       4. Find another better font for this purpose.
+#       5. Cleanup debugging logic
+#
+#########
+
 import random
 import sys
 from PIL import Image, ImageDraw, ImageFont
 
 #Settings
 PROB_DROP = 60
-INITIAL_CORE = 60
-MAX_MAP_SIZE = 200
+INITIAL_CORE = 25
+MAX_MAP_SIZE = 100
 
 #Image Settings
 FONT_SIZE = 15
 IMAGE_SIZE = 10 + MAX_MAP_SIZE*(FONT_SIZE)
 COLOR_KEY ={
     '~' : (0,0,255,255),
-    '+' : (0,255,0,255)
+    '_' : (0,255,0,255),
+    '@' : (255,0,0,255),
+    0 : (0,0,0,255)
 }
 
 fullMap = [[0 for x in range(0,MAX_MAP_SIZE)] for y in range(0,MAX_MAP_SIZE)]
 prettyMap = [[0 for x in range(0,MAX_MAP_SIZE)] for y in range(0,MAX_MAP_SIZE)]
 
+islandList = []
 processList = []
 
 def prettyPrintMap(matrix):
@@ -34,6 +52,7 @@ def makeImage(matrix):
     for x in range(0, MAX_MAP_SIZE):
         for y in range(0, MAX_MAP_SIZE):
             # draw text, full opacity
+
             d.text((10 + y*(FONT_SIZE), 10 + x*(FONT_SIZE)), str(matrix[x][y]), font=fnt, fill=COLOR_KEY[matrix[x][y]])
 
 
@@ -44,6 +63,7 @@ def generateMap(core):
     startX = random.randint(10,MAX_MAP_SIZE-10)
     startY = random.randint(10,MAX_MAP_SIZE-10)
 
+    islandList.append((startX, startY))
     debugNum = 0
     #Place the core of the landmass and add it to our work list
     fullMap[startX][startY] = core
@@ -79,6 +99,65 @@ def generateMap(core):
                     processList.append((newX, newY - 1, nextValue))
 
         processList.pop(0)
+    generateRivers(1)
+
+#TODO: Big todo here, Refactor this completely, need to move it to another file FOR SURE
+def findNearestRiverMouth(xPos, yPos):
+    done = False
+    searchOffset = 0
+
+    #TODO Implement ENUM instead of magic
+    searchOrder = [0,1,2,3]
+    random.shuffle(searchOrder)
+
+    for order in searchOrder:
+        searchOffset = 0
+        done = False
+        while not done:
+            searchOffset = searchOffset + 1
+            newX = xPos
+            newY = yPos
+
+            if newX < 0 or newX > len(fullMap) or newY < 0 or newY > len(fullMap[0]):
+                done = True
+            else:
+                #+x
+                if order == 0:
+                    newX = xPos + searchOffset
+
+                    if fullMap[newX][yPos] == 0:
+                        return (newX - 1, yPos)
+                #-x
+                elif order == 1:
+                    newX = xPos - searchOffset
+                    if fullMap[newX][yPos] == 0:
+                        return (newX + 1, yPos)
+
+                #+y
+                elif order == 2:
+                    newY = yPos + searchOffset
+                    if fullMap[xPos][newY] == 0:
+                        return (xPos, newY - 1)
+
+                #-y
+                else:
+                    newY = yPos - searchOffset
+                    if fullMap[newX][yPos] == 0:
+                        return (xPos, newY + 1)
+
+def generateRivers(numRivers):
+    while numRivers > 0:
+        searchX = random.randint(10,MAX_MAP_SIZE-10)
+        searchY = random.randint(10,MAX_MAP_SIZE-10)
+
+        #Found land, generally speaking rivers always move towards some greater body of water
+        #For our purposes since we have no lakes, that greater body of water has to be the ocean
+        #So we need to find the ocean.
+        if(fullMap[searchX][searchY] != 0):
+            tup = findNearestRiverMouth(searchX, searchY)
+            prettyMap[tup[0]][tup[1]] = '@'
+            numRivers = numRivers - 1
+
 
 def spreadLand(oldVal):
     if random.randint(0,100) < PROB_DROP:
@@ -92,17 +171,21 @@ while coreCounter > 0:
         break
 
     newIsland = random.randint(2, coreCounter)
+
     coreCounter = coreCounter - newIsland
     generateMap(newIsland)
     print(str(newIsland) + " | " + str(coreCounter))
+
+print(islandList)
 
 i = 0
 for x in fullMap:
     j = 0
     for y in x:
-        if y > 0:
-            prettyMap[i][j] = '+'
-        else:
+
+        if y > 0 and prettyMap[i][j] != '@':
+            prettyMap[i][j] = '_'
+        elif prettyMap[i][j] != '@':
             prettyMap[i][j] = '~'
         j = j + 1
     i = i + 1
