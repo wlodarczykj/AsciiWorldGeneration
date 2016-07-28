@@ -23,6 +23,7 @@ import random
 import sys
 from PIL import Image, ImageDraw, ImageFont
 import constants as consts
+import astar
 
 fullMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
 prettyMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
