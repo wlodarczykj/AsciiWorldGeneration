@@ -10,6 +10,12 @@
 #       3. Need to Move river generation logic out as well.
 #       4. Find another better font for this purpose.
 #       5. Cleanup debugging logic
+#   NOTE:
+#       1.A possible improvement is to use a low prob_drop (roughly 50 to 55%). Then fill in the small holes.
+#       2.If I implement the above solution I will need to procedurally generate lakes and ponds. Gulfs should be safe
+#
+#
+#
 #
 #########
 
@@ -18,8 +24,8 @@ import sys
 from PIL import Image, ImageDraw, ImageFont
 
 #Settings
-PROB_DROP = 60
-INITIAL_CORE = 25
+PROB_DROP = 65
+INITIAL_CORE = 28
 MAX_MAP_SIZE = 100
 
 #Image Settings
@@ -118,13 +124,12 @@ def findNearestRiverMouth(xPos, yPos):
             newX = xPos
             newY = yPos
 
-            if newX < 0 or newX > len(fullMap) or newY < 0 or newY > len(fullMap[0]):
+            if newX < 0 or newX >= len(fullMap) or newY < 0 or newY >= len(fullMap[0]):
                 done = True
             else:
                 #+x
                 if order == 0:
                     newX = xPos + searchOffset
-
                     if fullMap[newX][yPos] == 0:
                         return (newX - 1, yPos)
                 #-x
@@ -159,6 +164,8 @@ def generateRivers(numRivers):
             numRivers = numRivers - 1
 
 
+
+
 def spreadLand(oldVal):
     if random.randint(0,100) < PROB_DROP:
         return oldVal - 1
@@ -170,7 +177,8 @@ while coreCounter > 0:
     if coreCounter <= 1:
         break
 
-    newIsland = random.randint(2, coreCounter)
+    #TODO REMOVE DEBUG
+    newIsland = INITIAL_CORE
 
     coreCounter = coreCounter - newIsland
     generateMap(newIsland)
