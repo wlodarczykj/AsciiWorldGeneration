@@ -1,5 +1,6 @@
 import math
 from PIL import Image, ImageDraw, ImageFont
+import random
 
 fullMap = [[0 for x in range(0,100)] for y in range(0,100)]
 prettyMap = [['.' for x in range(0,100)] for y in range(0,100)]
@@ -115,21 +116,63 @@ def makeImage(matrix):
     txt.show()
     txt.save("test.bmp")
 
-pointA = (5,5)
-pointB = (46, 80)
-prettyMap[pointA[0]][pointA[1]] = 'S'
-prettyMap[pointB[0]][pointB[1]] = 'E'
+def displace(point, pathLength):
+    random.seed()
+    xDisp = random.randint(int(pathLength/-4), int(pathLength/4))
+    yDisp = random.randint(int(pathLength/-4), int(pathLength/4))
+    print("XDisp: " + str(xDisp) + " | YDisp: " + str(yDisp))
+    newPoint = (point[0] + xDisp, point[1] + yDisp)
+    return newPoint
 
-for i in range(0, len(fullMap) - 2):
-    fullMap[i][50] = 100
-    prettyMap[i][50] = '|'
-
-path = astar(pointA, pointB, fullMap)
-
-
-print("Path Length: " + str(len(path)))
-for point in path:
+def isValid(point, matrix):
     x, y = point
-    prettyMap[x][y] = 8
+    if x >= 0 and y >= 0 and x < len(matrix) and y < len(matrix[0]) and matrix[x][y] != 100:
+        return True
+
+    return False
+
+random.seed()
+
+pointA = (5,5)
+pointB = (15, 42)
+
+startPath = astar(pointA, pointB, fullMap)
+done = False
+
+allPaths = [startPath]
+points = [pointA, pointB]
+
+while len(allPaths) < 10:
+
+    i = 1
+    newPointList = []
+    newPointList.append(points[0])
+
+    for path in allPaths:
+        timeout = 0
+        newPoint = (-1,-1)
+        while not isValid(newPoint, fullMap) and timeout < 25:
+            print("test")
+            timeout = timeout + 1
+            newPoint = displace(path[int(len(path) / 2)], len(path))
+
+        newPointList.append(newPoint)
+        newPointList.append(points[i])
+
+        i = i + 1
+
+    points = newPointList
+
+    allPaths = []
+    for i in range(0, len(points) - 1):
+        allPaths.append(astar(points[i], points[i + 1], fullMap))
+
+    print("NewPoint: " + str(newPoint))
+
+
+for path in allPaths:
+    for point in path:
+        x, y = point
+        prettyMap[x][y] = 8
 
 makeImage(prettyMap)
