@@ -133,8 +133,12 @@ def isValid(point, matrix):
 
 random.seed()
 
+for i in range(len(fullMap) - 8):
+    fullMap[i][50] = 100
+    prettyMap[i][50] = "|"
+
 pointA = (5,5)
-pointB = (15, 42)
+pointB = (38, 87)
 
 startPath = astar(pointA, pointB, fullMap)
 done = False
