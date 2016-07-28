@@ -164,7 +164,7 @@ while coreCounter > 0:
         break
 
     #TODO REMOVE DEBUG
-    newIsland = INITIAL_CORE
+    newIsland = consts.INITIAL_CORE
 
     coreCounter = coreCounter - newIsland
     generateMap(newIsland)
