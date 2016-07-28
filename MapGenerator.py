@@ -22,24 +22,10 @@
 import random
 import sys
 from PIL import Image, ImageDraw, ImageFont
+import constants as consts
 
-#Settings
-PROB_DROP = 65
-INITIAL_CORE = 28
-MAX_MAP_SIZE = 100
-
-#Image Settings
-FONT_SIZE = 15
-IMAGE_SIZE = 10 + MAX_MAP_SIZE*(FONT_SIZE)
-COLOR_KEY ={
-    '~' : (0,0,255,255),
-    '_' : (0,255,0,255),
-    '@' : (255,0,0,255),
-    0 : (0,0,0,255)
-}
-
-fullMap = [[0 for x in range(0,MAX_MAP_SIZE)] for y in range(0,MAX_MAP_SIZE)]
-prettyMap = [[0 for x in range(0,MAX_MAP_SIZE)] for y in range(0,MAX_MAP_SIZE)]
+fullMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
+prettyMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
 
 islandList = []
 processList = []
@@ -52,22 +38,22 @@ def prettyPrintMap(matrix):
     print ('\n'.join(table))
 
 def makeImage(matrix):
-    txt = Image.new('RGBA', (IMAGE_SIZE,IMAGE_SIZE), (0,0,0,0))
-    fnt = ImageFont.truetype('Font/Roboto-black.ttf', FONT_SIZE)
+    txt = Image.new('RGBA', (consts.IMAGE_SIZE,consts.IMAGE_SIZE), (0,0,0,0))
+    fnt = ImageFont.truetype('Font/Roboto-black.ttf', consts.FONT_SIZE)
     d = ImageDraw.Draw(txt)
-    for x in range(0, MAX_MAP_SIZE):
-        for y in range(0, MAX_MAP_SIZE):
+    for x in range(0, consts.MAX_MAP_SIZE):
+        for y in range(0, consts.MAX_MAP_SIZE):
             # draw text, full opacity
 
-            d.text((10 + y*(FONT_SIZE), 10 + x*(FONT_SIZE)), str(matrix[x][y]), font=fnt, fill=COLOR_KEY[matrix[x][y]])
+            d.text((10 + y*(consts.FONT_SIZE), 10 + x*(consts.FONT_SIZE)), str(matrix[x][y]), font=fnt, fill=consts.COLOR_KEY[matrix[x][y]])
 
 
     txt.show()
     txt.save("result.bmp")
 
 def generateMap(core):
-    startX = random.randint(10,MAX_MAP_SIZE-10)
-    startY = random.randint(10,MAX_MAP_SIZE-10)
+    startX = random.randint(10,consts.MAX_MAP_SIZE-10)
+    startY = random.randint(10,consts.MAX_MAP_SIZE-10)
 
     islandList.append((startX, startY))
     debugNum = 0
@@ -105,7 +91,7 @@ def generateMap(core):
                     processList.append((newX, newY - 1, nextValue))
 
         processList.pop(0)
-    generateRivers(1)
+    #generateRivers(1)
 
 #TODO: Big todo here, Refactor this completely, need to move it to another file FOR SURE
 def findNearestRiverMouth(xPos, yPos):
@@ -152,8 +138,8 @@ def findNearestRiverMouth(xPos, yPos):
 
 def generateRivers(numRivers):
     while numRivers > 0:
-        searchX = random.randint(10,MAX_MAP_SIZE-10)
-        searchY = random.randint(10,MAX_MAP_SIZE-10)
+        searchX = random.randint(10,consts.MAX_MAP_SIZE-10)
+        searchY = random.randint(10,consts.MAX_MAP_SIZE-10)
 
         #Found land, generally speaking rivers always move towards some greater body of water
         #For our purposes since we have no lakes, that greater body of water has to be the ocean
@@ -167,12 +153,12 @@ def generateRivers(numRivers):
 
 
 def spreadLand(oldVal):
-    if random.randint(0,100) < PROB_DROP:
+    if random.randint(0,100) < consts.PROB_DROP:
         return oldVal - 1
     else:
         return oldVal
 
-coreCounter = INITIAL_CORE
+coreCounter = consts.INITIAL_CORE
 while coreCounter > 0:
     if coreCounter <= 1:
         break
@@ -192,9 +178,9 @@ for x in fullMap:
     for y in x:
 
         if y > 0 and prettyMap[i][j] != '@':
-            prettyMap[i][j] = '_'
-        elif prettyMap[i][j] != '@':
             prettyMap[i][j] = '~'
+        elif prettyMap[i][j] != '@':
+            prettyMap[i][j] = '_'
         j = j + 1
     i = i + 1
 
