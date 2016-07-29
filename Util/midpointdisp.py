@@ -1,17 +1,17 @@
 import random
-import astar
+from util.astar import astar
 
 def displace(point, pathLength):
     random.seed()
-    xDisp = random.randint(int(pathLength/-4), int(pathLength/4))
-    yDisp = random.randint(int(pathLength/-4), int(pathLength/4))
+    xDisp = random.randint(int(pathLength/-1), int(pathLength))
+    yDisp = random.randint(int(pathLength/-1), int(pathLength))
 
     newPoint = (point[0] + xDisp, point[1] + yDisp)
     return newPoint
 
 
-def midpointDisplacement(startPath, iterations):
-    points = [startPath[0], startPath[len(path) - 1]]
+def midpointDisplacement(startPath, iterations, matrix):
+    points = [startPath[0], startPath[len(startPath) - 1]]
     allPaths = [startPath]
     for i in range(0, iterations):
         newPointList = []
@@ -21,7 +21,7 @@ def midpointDisplacement(startPath, iterations):
         for path in allPaths:
             timeout = 0
             newPoint = (-1,-1)
-            while not isValid(newPoint, fullMap) and timeout < 25:
+            while not isValid(newPoint, matrix) and timeout < 25:
                 timeout = timeout + 1
                 newPoint = displace(path[int(len(path) / 2)], len(path))
 
@@ -34,4 +34,13 @@ def midpointDisplacement(startPath, iterations):
 
         allPaths = []
         for i in range(0, len(points) - 1):
-            allPaths.append(astar(points[i], points[i + 1], fullMap))
+            allPaths.append(astar(points[i], points[i + 1], matrix))
+
+    return allPaths
+
+def isValid(point, matrix):
+    x, y = point
+    if x >= 0 and y >= 0 and x < len(matrix) and y < len(matrix[0]) and matrix[x][y] != 100:
+        return True
+
+    return False

@@ -86,7 +86,7 @@ def getNeighbors(current, matrix):
     if y - 1 >= 0  and matrix[x][y - 1] != 0:
         retVal.append((x, y - 1))
 
-    if y + 1 < len(matrix[0]) and matrix[x][y + 1] != 100:
+    if y + 1 < len(matrix[0]) and matrix[x][y + 1] != 0:
         retVal.append((x, y + 1))
 
 
@@ -98,10 +98,3 @@ def reconstruct_path(cameFrom, current):
         current = cameFrom[current]
         total_path.append(current)
     return total_path
-
-def isValid(point, matrix):
-    x, y = point
-    if x >= 0 and y >= 0 and x < len(matrix) and y < len(matrix[0]) and matrix[x][y] != 100:
-        return True
-
-    return False

@@ -24,6 +24,7 @@ import sys
 from PIL import Image, ImageDraw, ImageFont
 import constants as consts
 from util.astar import astar
+from util.midpointdisp import midpointDisplacement
 
 fullMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
 prettyMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
@@ -150,8 +151,8 @@ def generateRivers(numRivers):
         if(fullMap[searchX][searchY] != 0):
             riverPoints.append(findNearestRiverMouth(searchX, searchY))
 
-
     path = astar(riverPoints[0], riverPoints[1], fullMap)
+    print(midpointDisplacement(path, 4, fullMap))
     for tup in path:
         x, y = tup
         prettyMap[x][y] = '@'
