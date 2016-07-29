@@ -23,7 +23,7 @@ import random
 import sys
 from PIL import Image, ImageDraw, ImageFont
 import constants as consts
-import astar
+from util.astar import astar
 
 fullMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
 prettyMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
@@ -92,7 +92,7 @@ def generateMap(core):
                     processList.append((newX, newY - 1, nextValue))
 
         processList.pop(0)
-    #generateRivers(1)
+    generateRivers(2)
 
 #TODO: Big todo here, Refactor this completely, need to move it to another file FOR SURE
 def findNearestRiverMouth(xPos, yPos):
@@ -111,7 +111,7 @@ def findNearestRiverMouth(xPos, yPos):
             newX = xPos
             newY = yPos
 
-            if newX < 0 or newX >= len(fullMap) or newY < 0 or newY >= len(fullMap[0]):
+            if newX - searchOffset < 0 or newX + searchOffset >= len(fullMap) or newY - searchOffset < 0 or newY + searchOffset >= len(fullMap[0]):
                 done = True
             else:
                 #+x
@@ -138,20 +138,23 @@ def findNearestRiverMouth(xPos, yPos):
                         return (xPos, newY + 1)
 
 def generateRivers(numRivers):
-    while numRivers > 0:
+    riverPoints = []
+    while len(riverPoints) < 2:
         searchX = random.randint(10,consts.MAX_MAP_SIZE-10)
         searchY = random.randint(10,consts.MAX_MAP_SIZE-10)
 
         #Found land, generally speaking rivers always move towards some greater body of water
         #For our purposes since we have no lakes, that greater body of water has to be the ocean
         #So we need to find the ocean.
+        print(riverPoints)
         if(fullMap[searchX][searchY] != 0):
-            tup = findNearestRiverMouth(searchX, searchY)
-            prettyMap[tup[0]][tup[1]] = '@'
-            numRivers = numRivers - 1
+            riverPoints.append(findNearestRiverMouth(searchX, searchY))
 
 
-
+    path = astar(riverPoints[0], riverPoints[1], fullMap)
+    for tup in path:
+        x, y = tup
+        prettyMap[x][y] = '@'
 
 def spreadLand(oldVal):
     if random.randint(0,100) < consts.PROB_DROP:
