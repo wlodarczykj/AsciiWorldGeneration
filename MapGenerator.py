@@ -29,7 +29,7 @@ from util.midpointdisp import midpointDisplacement
 fullMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
 prettyMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
 
-islandList = []
+islandList = {}
 processList = []
 
 def prettyPrintMap(matrix):
@@ -57,7 +57,7 @@ def generateMap(core):
     startX = random.randint(10,consts.MAX_MAP_SIZE-10)
     startY = random.randint(10,consts.MAX_MAP_SIZE-10)
 
-    islandList.append((startX, startY))
+    islandList[(startX, startY)] = [(startX, startY)]
     debugNum = 0
     #Place the core of the landmass and add it to our work list
     fullMap[startX][startY] = core
@@ -65,15 +65,13 @@ def generateMap(core):
 
     #Trick to avoid recursion, basically instead of the stack keeping track of the work to do, processList will.
     while(len(processList) > 0):
-        debugNum = debugNum + 1
-        #print(debugNum)
-
         #extract the info from the processList using meaningful names
         newX = processList[0][0]
         newY = processList[0][1]
         newVal = processList[0][2]
 
         if newVal > 0 and fullMap[newX][newY] == 0:
+            islandList[(startX, startY)].append((newX, newY))
             fullMap[newX][newY] = newVal
             if newX + 1 < len(fullMap) and fullMap[newX + 1][newY] == 0:
                 nextValue = spreadLand(newVal)
@@ -147,12 +145,11 @@ def generateRivers(numRivers):
         #Found land, generally speaking rivers always move towards some greater body of water
         #For our purposes since we have no lakes, that greater body of water has to be the ocean
         #So we need to find the ocean.
-        print(riverPoints)
         if(fullMap[searchX][searchY] != 0):
             riverPoints.append(findNearestRiverMouth(searchX, searchY))
 
     path = astar(riverPoints[0], riverPoints[1], fullMap)
-    print(midpointDisplacement(path, 4, fullMap))
+    midpointDisplacement(path, 4, fullMap)
     for tup in path:
         x, y = tup
         prettyMap[x][y] = '@'
@@ -173,9 +170,9 @@ while coreCounter > 0:
 
     coreCounter = coreCounter - newIsland
     generateMap(newIsland)
-    print(str(newIsland) + " | " + str(coreCounter))
 
-print(islandList)
+for x in islandList:
+    print("Length of islandList: " + str(len(x)) + " | " + str(len(islandList[x])))
 
 i = 0
 for x in fullMap:
