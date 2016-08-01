@@ -22,7 +22,7 @@
 import random
 import sys
 from PIL import Image, ImageDraw, ImageFont
-from noise import snoise3
+from noise import pnoise3
 import constants as consts
 from util.astar import astar
 from util.midpointdisp import midpointDisplacement
@@ -123,8 +123,8 @@ def make_array():
 
     for y in range(size):
         for x in range(size):
-            v = snoise3(x * scale, y * scale, seed, octaves = 10, persistence=.45,lacunarity=3.0)
-            if v <= 0.1:
+            v = pnoise3(x * scale, y * scale, seed, octaves = 10, persistence=.45,lacunarity=3.0)
+            if v <= 0.0:
                 fullMap[x][y] = 0
             else:
                 fullMap[x][y] = 1
