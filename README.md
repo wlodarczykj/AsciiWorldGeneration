@@ -3,11 +3,11 @@ A Python implementation to randomly generate worlds much like Dwarf Fortress.
 
 ##Land
 ###Algorithm
-The algorithm to generate landmass is similar to a disease spreading algorithm.
-The first step is to place a center randomly on the map with a specified score (currently).
+The algorithm used is to leverage a perlin noise function. The code takes a point and plugs it into the Perlin Noise function.
+Then the code scores the point based on the distance from each edge, and the output of the noise function.
+The further from an edge and the larger the value of the noise function output will yield a land point.
+If the score falls below a certain acceptance criteria it will be rejected and kept as ocean.
 
-The algorithm then iterates on the squares around the center. This next iteration will assign scores to these squares.
-The adjacent squares will either inherit the score from the center, or it will possibly inherit the (score - 1). Whether is inherits the score or the (score - 1) is determined based on a hard-coded (currently) probability.
 The code currently produces something like the following:
 ###Examples
 ![Example](result.bmp)
