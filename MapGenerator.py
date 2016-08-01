@@ -116,18 +116,17 @@ def generateRivers(numRivers):
         prettyMap[x][y] = '@'
 
 def make_array():
-    scale = 1/15.0
+    scale = 1/55.0
     size = len(fullMap)
     oct = 8
     seed = random.randint(0,100)
 
     for y in range(size):
         for x in range(size):
-            v = pnoise3(x * scale, y * scale, seed, octaves = 10, persistence=.45,lacunarity=3.0)
-            if v <= 0.0:
+            score = v * (size - abs(x - (size/2)) - abs(y - (size/2)))
                 fullMap[x][y] = 0
             else:
-                fullMap[x][y] = 1
+                fullMap[x][y] = round(score, 2)
     return fullMap
 
 coreCounter = consts.INITIAL_CORE
