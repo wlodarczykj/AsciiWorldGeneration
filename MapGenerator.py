@@ -143,9 +143,9 @@ for x in fullMap:
     for y in x:
 
         if y > 0 and prettyMap[i][j] != '@':
-            prettyMap[i][j] = '~'
-        elif prettyMap[i][j] != '@':
             prettyMap[i][j] = '_'
+        elif prettyMap[i][j] != '@':
+            prettyMap[i][j] = '~'
         j = j + 1
     i = i + 1
 
