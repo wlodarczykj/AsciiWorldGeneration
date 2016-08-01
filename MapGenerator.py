@@ -22,6 +22,7 @@
 import random
 import sys
 from PIL import Image, ImageDraw, ImageFont
+from noise import snoise3
 import constants as consts
 from util.astar import astar
 from util.midpointdisp import midpointDisplacement
@@ -52,46 +53,6 @@ def makeImage(matrix):
 
     txt.show()
     txt.save("result.bmp")
-
-def generateMap(core):
-    startX = random.randint(10,consts.MAX_MAP_SIZE-10)
-    startY = random.randint(10,consts.MAX_MAP_SIZE-10)
-
-    islandList[(startX, startY)] = [(startX, startY)]
-    debugNum = 0
-    #Place the core of the landmass and add it to our work list
-    fullMap[startX][startY] = core
-    processList = [(startX - 1, startY, spreadLand(core)), (startX + 1, startY, spreadLand(core)), (startX, startY - 1, spreadLand(core)), (startX, startY + 1, spreadLand(core))]
-
-    #Trick to avoid recursion, basically instead of the stack keeping track of the work to do, processList will.
-    while(len(processList) > 0):
-        #extract the info from the processList using meaningful names
-        newX = processList[0][0]
-        newY = processList[0][1]
-        newVal = processList[0][2]
-
-        if newVal > 0 and fullMap[newX][newY] == 0:
-            islandList[(startX, startY)].append((newX, newY))
-            fullMap[newX][newY] = newVal
-            if newX + 1 < len(fullMap) and fullMap[newX + 1][newY] == 0:
-                nextValue = spreadLand(newVal)
-                if nextValue > 0 and fullMap[newX + 1][newY] == 0:
-                    processList.append((newX + 1, newY, nextValue))
-            if newX - 1 >= 0 and fullMap[newX - 1][newY] == 0:
-                nextValue = spreadLand(newVal)
-                if nextValue > 0 and fullMap[newX - 1][ newY] == 0:
-                    processList.append((newX - 1, newY, nextValue))
-            if newY + 1 < len(fullMap) and fullMap[newX ][newY + 1] == 0:
-                nextValue = spreadLand(newVal)
-                if nextValue > 0 and fullMap[newX][ newY + 1] == 0:
-                    processList.append((newX, newY + 1, nextValue))
-            if newY - 1 >= 0 and fullMap[newX][newY - 1] == 0:
-                nextValue = spreadLand(newVal)
-                if nextValue > 0 and fullMap[newX][ newY - 1] == 0:
-                    processList.append((newX, newY - 1, nextValue))
-
-        processList.pop(0)
-    generateRivers(2)
 
 #TODO: Big todo here, Refactor this completely, need to move it to another file FOR SURE
 def findNearestRiverMouth(xPos, yPos):
@@ -154,22 +115,24 @@ def generateRivers(numRivers):
         x, y = tup
         prettyMap[x][y] = '@'
 
-def spreadLand(oldVal):
-    if random.randint(0,100) < consts.PROB_DROP:
-        return oldVal - 1
-    else:
-        return oldVal
+def make_array():
+    scale = 1/15.0
+    size = len(fullMap)
+    oct = 8
+    seed = random.randint(0,100)
+
+    for y in range(size):
+        for x in range(size):
+            v = snoise3(x * scale, y * scale, seed, octaves = 10, persistence=.45,lacunarity=3.0)
+            if v <= 0.1:
+                fullMap[x][y] = 0
+            else:
+                fullMap[x][y] = 1
+    return fullMap
 
 coreCounter = consts.INITIAL_CORE
-while coreCounter > 0:
-    if coreCounter <= 1:
-        break
 
-    #TODO REMOVE DEBUG
-    newIsland = consts.INITIAL_CORE
-
-    coreCounter = coreCounter - newIsland
-    generateMap(newIsland)
+make_array()
 
 for x in islandList:
     print("Length of islandList: " + str(len(x)) + " | " + str(len(islandList[x])))
