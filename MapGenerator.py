@@ -116,16 +116,16 @@ def generateRivers(numRivers):
         prettyMap[x][y] = '@'
 
 def make_array():
-    scale = 1/45.0
+    scale = 1/15.0
     size = len(fullMap)
-    seed = random.randint(0,100)
+    seed = random.randint(0,10000)
 
     for y in range(size):
         for x in range(size):
-            v = snoise3(x * scale, y * scale, seed, octaves = 12, persistence=.35,lacunarity=5.0)
+            v = pnoise3(x * scale, y * scale, seed, octaves = 12, persistence=.35,lacunarity=5.0)
             v = (v+1)/2.0
-            score = v * (size*2 - abs(15 + x - (size/2)) - abs(15 + y - (size/2)))
-            if score <= 100.0:
+            score = v * (size*2 - abs(x - (size/2)) - abs(y - (size/2)))
+            if score <= 80.0:
                 fullMap[x][y] = 0
             else:
                 fullMap[x][y] = round(score, 2)
