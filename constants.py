@@ -8,7 +8,7 @@ COLOR_KEY = {
 #Settings
 PROB_DROP = 55
 INITIAL_CORE = 13
-MAX_MAP_SIZE = 250
+MAX_MAP_SIZE = 100
 
 #Image Settings
 FONT_SIZE = 15
