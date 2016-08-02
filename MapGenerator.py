@@ -22,7 +22,7 @@
 import random
 import sys
 from PIL import Image, ImageDraw, ImageFont
-from noise import pnoise3
+from noise import pnoise3, snoise3
 import constants as consts
 from util.astar import astar
 from util.midpointdisp import midpointDisplacement
@@ -116,14 +116,17 @@ def generateRivers(numRivers):
         prettyMap[x][y] = '@'
 
 def make_array():
-    scale = 1/55.0
+    scale = 1/45.0
     size = len(fullMap)
     oct = 8
     seed = random.randint(0,100)
 
     for y in range(size):
         for x in range(size):
-            score = v * (size - abs(x - (size/2)) - abs(y - (size/2)))
+            v = snoise3(x * scale, y * scale, seed, octaves = 12, persistence=.35,lacunarity=5.0)
+            v = (v+1)/2.0
+            score = v * (size*2 - abs(x - (size/2)) - abs(y - (size/2)))
+            if score <= 250.0:
                 fullMap[x][y] = 0
             else:
                 fullMap[x][y] = round(score, 2)
