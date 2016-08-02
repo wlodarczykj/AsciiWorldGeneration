@@ -115,14 +115,14 @@ def generateRivers(numRivers):
         x, y = tup
         prettyMap[x][y] = '@'
 
-def make_array():
-    scale = 1/15.0
+def create_land():
+    scale = 15.0
     size = len(fullMap)
     seed = random.randint(0,10000)
 
     for y in range(size):
         for x in range(size):
-            v = pnoise3(x * scale, y * scale, seed, octaves = 12, persistence=.35,lacunarity=5.0)
+            v = pnoise3(x / scale, y / scale, seed, consts.OCTAVES, consts.PERSISTENCE, consts.LACUNARITY)
             v = (v+1)/2.0
             score = v * (size*2 - abs(x - (size/2)) - abs(y - (size/2)))
             if score <= 80.0:
@@ -131,12 +131,7 @@ def make_array():
                 fullMap[x][y] = round(score, 2)
     return fullMap
 
-coreCounter = consts.INITIAL_CORE
-
-make_array()
-
-for x in islandList:
-    print("Length of islandList: " + str(len(x)) + " | " + str(len(islandList[x])))
+create_land()
 
 i = 0
 for x in fullMap:
