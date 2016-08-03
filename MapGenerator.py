@@ -54,66 +54,6 @@ def makeImage(matrix):
     txt.show()
     txt.save("result.bmp")
 
-#TODO: Big todo here, Refactor this completely, need to move it to another file FOR SURE
-def findNearestRiverMouth(xPos, yPos):
-    done = False
-    searchOffset = 0
-
-    #TODO Implement ENUM instead of magic
-    searchOrder = [0,1,2,3]
-    random.shuffle(searchOrder)
-
-    for order in searchOrder:
-        searchOffset = 0
-        done = False
-        while not done:
-            searchOffset = searchOffset + 1
-            newX = xPos
-            newY = yPos
-
-            if newX - searchOffset < 0 or newX + searchOffset >= len(fullMap) or newY - searchOffset < 0 or newY + searchOffset >= len(fullMap[0]):
-                done = True
-            else:
-                #+x
-                if order == 0:
-                    newX = xPos + searchOffset
-                    if fullMap[newX][yPos] == 0:
-                        return (newX - 1, yPos)
-                #-x
-                elif order == 1:
-                    newX = xPos - searchOffset
-                    if fullMap[newX][yPos] == 0:
-                        return (newX + 1, yPos)
-
-                #+y
-                elif order == 2:
-                    newY = yPos + searchOffset
-                    if fullMap[xPos][newY] == 0:
-                        return (xPos, newY - 1)
-
-                #-y
-                else:
-                    newY = yPos - searchOffset
-                    if fullMap[newX][yPos] == 0:
-                        return (xPos, newY + 1)
-
-def generateRivers(numRivers):
-    riverPoints = []
-    while len(riverPoints) < 2:
-        searchX = random.randint(10,consts.MAX_MAP_SIZE-10)
-        searchY = random.randint(10,consts.MAX_MAP_SIZE-10)
-
-        #Found land, generally speaking rivers always move towards some greater body of water
-        #For our purposes since we have no lakes, that greater body of water has to be the ocean
-        #So we need to find the ocean.
-        if(fullMap[searchX][searchY] != 0):
-            riverPoints.append(findNearestRiverMouth(searchX, searchY))
-
-    path = astar(riverPoints[0], riverPoints[1], fullMap)
-    midpointDisplacement(path, 4, fullMap)
-    for tup in path:
-        x, y = tup
-        prettyMap[x][y] = '@'
 
 def create_land():
     scale = 15.0
@@ -125,31 +65,27 @@ def create_land():
             v = pnoise3(x / scale, y / scale, seed, consts.OCTAVES, consts.PERSISTENCE, consts.LACUNARITY)
             v = (v+1)/2.0
             score = v * (size*2- abs(x - (size/2.0)) - abs(y - (size/2.0)))
-            if score <= 80.0:
-                fullMap[x][y] = 0
-            elif score >= 115.0:
+            if score >= consts.LAND_THRESHOLD:
+                fullMap[x][y] = 1
+            elif score >= consts.MOUNTAIN_THRESHOLD:
                 fullMap[x][y] = 2
             else:
-                fullMap[x][y] = 1
+                fullMap[x][y] = 0
     return fullMap
 
 create_land()
 
-i = 0
-for x in fullMap:
-    j = 0
-    for y in x:
-        if y == 2:
-            prettyMap[i][j] = '@'
-        elif y > 0 and prettyMap[i][j] != '@':
-            prettyMap[i][j] = '_'
-        elif prettyMap[i][j] != '@':
-            prettyMap[i][j] = '~'
-        j = j + 1
-    i = i + 1
+for x in range(consts.MAX_MAP_SIZE):
+    for y in range(consts.MAX_MAP_SIZE):
+        if x <= 3 or x >= consts.MAX_MAP_SIZE - 3 or y <= 3 or y >= consts.MAX_MAP_SIZE - 3:
+            prettyMap[x][y] = '~'
+        elif fullMap[x][y] == 3:
+            prettyMap[x][y] = 'X'
+        elif fullMap[x][y] == 2:
+            prettyMap[x][y] = '@'
+        elif fullMap[x][y] == 1:
+            prettyMap[x][y] = '_'
+        else:
+            prettyMap[x][y] = '~'
 
-#prettyPrintMap(fullMap)
-#print("")
-#prettyPrintMap(prettyMap)
-#makeImage(fullMap)
 makeImage(prettyMap)
