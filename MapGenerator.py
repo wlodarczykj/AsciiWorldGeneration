@@ -124,11 +124,13 @@ def make_array():
         for x in range(size):
             v = pnoise3(x * scale, y * scale, seed, octaves = 12, persistence=.35,lacunarity=5.0)
             v = (v+1)/2.0
-            score = v * (size*2 - abs(x - (size/2)) - abs(y - (size/2)))
+            score = v * (size*2- abs(x - (size/2.0)) - abs(y - (size/2.0)))
             if score <= 80.0:
                 fullMap[x][y] = 0
+            elif score >= 115.0:
+                fullMap[x][y] = 2
             else:
-                fullMap[x][y] = round(score, 2)
+                fullMap[x][y] = 1
     return fullMap
 
 coreCounter = consts.INITIAL_CORE
@@ -142,8 +144,9 @@ i = 0
 for x in fullMap:
     j = 0
     for y in x:
-
-        if y > 0 and prettyMap[i][j] != '@':
+        if y == 2:
+            prettyMap[i][j] = '@'
+        elif y > 0 and prettyMap[i][j] != '@':
             prettyMap[i][j] = '_'
         elif prettyMap[i][j] != '@':
             prettyMap[i][j] = '~'
