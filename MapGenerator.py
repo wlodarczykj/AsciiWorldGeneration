@@ -24,6 +24,7 @@ import sys
 from PIL import Image, ImageDraw, ImageFont
 from noise import pnoise3, snoise3
 import constants as consts
+from generators.river_generator import river_generator
 from util.astar import astar
 from util.midpointdisp import midpointDisplacement
 
@@ -56,7 +57,7 @@ def makeImage(matrix):
 
 
 def create_land():
-    scale = 15.0
+    scale = 35.0
     size = len(fullMap)
     seed = random.randint(0,10000)
 
@@ -64,16 +65,19 @@ def create_land():
         for x in range(size):
             v = pnoise3(x / scale, y / scale, seed, consts.OCTAVES, consts.PERSISTENCE, consts.LACUNARITY)
             v = (v+1)/2.0
-            score = v * (size*2- abs(x - (size/2.0)) - abs(y - (size/2.0)))
-            if score >= consts.LAND_THRESHOLD:
-                fullMap[x][y] = 1
-            elif score >= consts.MOUNTAIN_THRESHOLD:
+            xScore = v * (size - abs(x - (size/2.0)))
+            yScore = v * (size - abs(y - (size/2.0)))
+            if xScore >= consts.MOUNTAIN_THRESHOLD and yScore >= consts.MOUNTAIN_THRESHOLD:
                 fullMap[x][y] = 2
+            elif xScore >= consts.LAND_THRESHOLD and yScore >= consts.LAND_THRESHOLD:
+                fullMap[x][y] = 1
             else:
                 fullMap[x][y] = 0
     return fullMap
 
 create_land()
+#river_gen = river_generator(fullMap)
+#fullMap = river_gen.generateRivers(1)
 
 for x in range(consts.MAX_MAP_SIZE):
     for y in range(consts.MAX_MAP_SIZE):
@@ -82,7 +86,7 @@ for x in range(consts.MAX_MAP_SIZE):
         elif fullMap[x][y] == 3:
             prettyMap[x][y] = 'X'
         elif fullMap[x][y] == 2:
-            prettyMap[x][y] = '@'
+            prettyMap[x][y] = '^'
         elif fullMap[x][y] == 1:
             prettyMap[x][y] = '_'
         else:
