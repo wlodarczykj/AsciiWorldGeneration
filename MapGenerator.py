@@ -75,9 +75,10 @@ def create_land():
                 fullMap[x][y] = 0
     return fullMap
 
+
 create_land()
-#river_gen = river_generator(fullMap)
-#fullMap = river_gen.generateRivers(1)
+river_gen = river_generator(fullMap)
+fullMap = river_gen.generateRivers(1)
 
 for x in range(consts.MAX_MAP_SIZE):
     for y in range(consts.MAX_MAP_SIZE):

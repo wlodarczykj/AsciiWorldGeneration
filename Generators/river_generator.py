@@ -6,63 +6,63 @@ import random
 class river_generator:
     def __init__(self, mapMatrix):
         self.fullMap = mapMatrix
+        self.coastPoints = []
 
-    def findNearestRiverMouth(self, xPos, yPos):
+    def getCoast(self):
+        for x in range(consts.MAX_MAP_SIZE):
+            for y in range(consts.MAX_MAP_SIZE):
+                if self.nearWater((x,y)):
+                    self.coastPoints.append((x,y))
+
+    def nearWater(self, point):
+        x, y = point
+        retVal = False
+        if self.fullMap[x][y] == 0:
+            return retVal
+
+        for xChange in range(-1,2):
+            for yChange in range(-1,2):
+                retVal = retVal or (self.fullMap[x + xChange][y + yChange] == 0)
+        return retVal
+
+    def findDirectRiver(self):
         done = False
-        searchOffset = 0
+        self.getCoast()
+        firstPoint = None
+        secondPoint = None
+        path = None
+        processedFirstPoints = []
+        processedSecondPoints = []
 
-        searchOrder = [0,1,2,3]
-        random.shuffle(searchOrder)
+        while not done:
+            while not firstPoint or firstPoint in processedFirstPoints:
+                firstPoint = random.randint(0, len(self.coastPoints)- 1)
+                firstPoint = self.coastPoints[firstPoint]
+            processedFirstPoints.append(firstPoint)
+            if(len(self.coastPoints) == len(processedFirstPoints)):
+                break
+            processedSecondPoints = []
+            processedSecondPoints.append(firstPoint)
+            timeout = 0
+            print(len(processedFirstPoints))
+            while not path or timeout < 150:
+                while not secondPoint or secondPoint in processedSecondPoints:
+                    secondPoint = random.randint(0, len(self.coastPoints) - 1)
+                    secondPoint = self.coastPoints[secondPoint]
 
-        for order in searchOrder:
-            searchOffset = 0
-            done = False
-            while not done:
-                searchOffset = searchOffset + 1
-                newX = xPos
-                newY = yPos
+                path = astar(firstPoint, secondPoint, self.fullMap)
+                timeout += 1
+            if timeout < 15:
+                done = True
 
-                if newX - searchOffset < 0 or newX + searchOffset >= len(self.fullMap) or newY - searchOffset < 0 or newY + searchOffset >= len(self.fullMap[0]):
-                    done = True
-                else:
-                    #+x
-                    if order == 0:
-                        newX = xPos + searchOffset
-                        if self.fullMap[newX][yPos] == 0:
-                            return (newX - 1, yPos)
-                    #-x
-                    elif order == 1:
-                        newX = xPos - searchOffset
-                        if self.fullMap[newX][yPos] == 0:
-                            return (newX + 1, yPos)
-
-                    #+y
-                    elif order == 2:
-                        newY = yPos + searchOffset
-                        if self.fullMap[xPos][newY] == 0:
-                            return (xPos, newY - 1)
-
-                    #-y
-                    else:
-                        newY = yPos - searchOffset
-                        if self.fullMap[newX][yPos] == 0:
-                            return (xPos, newY + 1)
+        print('Done! Found my path.')
+        return path
 
     def generateRivers(self, numRivers):
-        riverPoints = []
-        while len(riverPoints) < 2:
-            searchX = random.randint(10,consts.MAX_MAP_SIZE-10)
-            searchY = random.randint(10,consts.MAX_MAP_SIZE-10)
+        path = self.findDirectRiver()
 
-            #Found land, generally speaking rivers always move towards some greater body of water
-            #For our purposes since we have no lakes, that greater body of water has to be the ocean
-            #So we need to find the ocean.
-            if(self.fullMap[searchX][searchY] != 0):
-                riverPoints.append(self.findNearestRiverMouth(searchX, searchY))
-
-        path = astar(riverPoints[0], riverPoints[1], self.fullMap)
         if path:
-            midpointDisplacement(path, consts.MIDPOINT_DISPLACE_ITERATIONS, self.fullMap)
+            #midpointDisplacement(path, consts.MIDPOINT_DISPLACE_ITERATIONS, self.fullMap)
             for tup in path:
                 x, y = tup
                 self.fullMap[x][y] = 3
