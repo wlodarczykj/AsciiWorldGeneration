@@ -6,33 +6,32 @@
 #
 #   TODO:
 #       1. Need to refactor.
-#       2. Need to Move this logic to a class and have a driver outside
-#       3. Need to Move river generation logic out as well.
-#       4. Find another better font for this purpose.
-#       5. Cleanup debugging logic
+#       2. Add Logging.
+#       3. Improve Rivers.
+#       4. Add Biomes.
+#       5. Add Civilization.
 #   NOTE:
-#       1.A possible improvement is to use a low prob_drop (roughly 50 to 55%). Then fill in the small holes.
-#       2.If I implement the above solution I will need to procedurally generate lakes and ponds. Gulfs should be safe
-#
-#
-#
+#       1. I wonder how I can make the map bigger and show off more stuff.
 #
 #########
 
 import random
 import sys
+import constants as consts
+import logging
 from PIL import Image, ImageDraw, ImageFont
 from noise import pnoise3, snoise3
-import constants as consts
 from generators.river_generator import river_generator
 from util.astar import astar
 from util.midpointdisp import midpointDisplacement
 
+#MAPS
 fullMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
 prettyMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
 
-islandList = {}
-processList = []
+#LOGGING
+LOG_FILE = "logs/map_generation.log"
+logging.basicConfig(filename=LOG_FILE, filemode='w', level=logging.DEBUG)
 
 def prettyPrintMap(matrix):
     s = [[str(e) for e in row] for row in matrix]
@@ -48,9 +47,7 @@ def makeImage(matrix):
     for x in range(0, consts.MAX_MAP_SIZE):
         for y in range(0, consts.MAX_MAP_SIZE):
             # draw text, full opacity
-
             d.text((10 + y*(consts.FONT_SIZE), 10 + x*(consts.FONT_SIZE)), str(matrix[x][y]), font=fnt, fill=consts.COLOR_KEY[matrix[x][y]])
-
 
     txt.show()
     txt.save("result.bmp")
@@ -75,10 +72,11 @@ def create_land():
                 fullMap[x][y] = 0
     return fullMap
 
-
+logging.info('Starting Map Generation...')
 create_land()
 river_gen = river_generator(fullMap)
 fullMap = river_gen.generateRivers(1)
+logging.info('Finished Map Generation...')
 
 for x in range(consts.MAX_MAP_SIZE):
     for y in range(consts.MAX_MAP_SIZE):

@@ -2,6 +2,7 @@ from util.astar import astar
 from util.midpointdisp import midpointDisplacement
 import constants as consts
 import random
+import logging
 
 class river_generator:
     def __init__(self, mapMatrix):
@@ -13,11 +14,13 @@ class river_generator:
             for y in range(consts.MAX_MAP_SIZE):
                 if self.nearWater((x,y)):
                     self.coastPoints.append((x,y))
+        logging.info('Successfully completed marking the coast. Coastal Points marked: ' + str(len(self.coastPoints)))
 
     def nearWater(self, point):
         x, y = point
         retVal = False
-        if self.fullMap[x][y] == 0:
+        #TODO: Function name is a bit of a misnomer. Since this returns the applicable river mouths.
+        if self.fullMap[x][y] == 0 or (self.fullMap[x+1][y] == 0 and self.fullMap[x-1][y] == 0 and self.fullMap[x][y+1] == 0 and self.fullMap[x][y-1] == 0):
             return retVal
 
         for xChange in range(-1,2):
@@ -26,36 +29,24 @@ class river_generator:
         return retVal
 
     def findDirectRiver(self):
-        done = False
         self.getCoast()
-        firstPoint = None
         secondPoint = None
         path = None
-        processedFirstPoints = []
         processedSecondPoints = []
 
-        while not done:
-            while not firstPoint or firstPoint in processedFirstPoints:
-                firstPoint = random.randint(0, len(self.coastPoints)- 1)
-                firstPoint = self.coastPoints[firstPoint]
-            processedFirstPoints.append(firstPoint)
-            if(len(self.coastPoints) == len(processedFirstPoints)):
-                break
-            processedSecondPoints = []
-            processedSecondPoints.append(firstPoint)
-            timeout = 0
-            print(len(processedFirstPoints))
-            while not path or timeout < 150:
-                while not secondPoint or secondPoint in processedSecondPoints:
-                    secondPoint = random.randint(0, len(self.coastPoints) - 1)
-                    secondPoint = self.coastPoints[secondPoint]
+        firstPoint = random.randint(0, len(self.coastPoints)- 1)
+        firstPoint = self.coastPoints[firstPoint]
+        processedSecondPoints = []
+        processedSecondPoints.append(firstPoint)
+        while not path:
+            while not secondPoint or secondPoint in processedSecondPoints:
+                secondPoint = random.randint(0, len(self.coastPoints) - 1)
+                secondPoint = self.coastPoints[secondPoint]
 
-                path = astar(firstPoint, secondPoint, self.fullMap)
-                timeout += 1
-            if timeout < 15:
-                done = True
+            path = astar(firstPoint, secondPoint, self.fullMap)
+            processedSecondPoints.append(secondPoint)
 
-        print('Done! Found my path.')
+        logging.info('Found direct river.')
         return path
 
     def generateRivers(self, numRivers):
