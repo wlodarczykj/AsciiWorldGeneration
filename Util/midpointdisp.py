@@ -3,6 +3,7 @@ from util.astar import astar
 
 def displace(point, pathLength):
     random.seed()
+
     xDisp = random.randint(int(pathLength/-2), int(pathLength/2))
     yDisp = random.randint(int(pathLength/-2), int(pathLength/2))
 
@@ -21,7 +22,11 @@ def midpointDisplacement(startPath, iterations, matrix):
         for path in allPaths:
             timeout = 0
             newPoint = (-1,-1)
-            while not isValid(newPoint, matrix) and timeout < 25:
+            prevPoint = path[j-1]
+
+            testPath = None
+
+            while not isValid(prevPoint, newPoint, matrix) and timeout < 25:
                 timeout = timeout + 1
 
                 newPoint = displace(path[int(len(path) / 2)], len(path))
@@ -29,7 +34,7 @@ def midpointDisplacement(startPath, iterations, matrix):
             newPointList.append(newPoint)
             newPointList.append(points[j])
 
-            j = j + 1
+            j += 1
 
         points = newPointList
 
@@ -39,9 +44,13 @@ def midpointDisplacement(startPath, iterations, matrix):
 
     return allPaths
 
-def isValid(point, matrix):
+def isValid(prevPoint, point, matrix):
     x, y = point
     if x >= 0 and y >= 0 and x < len(matrix) and y < len(matrix[0]) and matrix[x][y] != 0:
-        return True
+        testPath = astar(prevPoint, point, matrix)
+        if testPath:
+            return True
+        else:
+            return False
 
     return False
