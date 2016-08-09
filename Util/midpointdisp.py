@@ -1,4 +1,5 @@
 import random
+import logging
 from util.astar import astar
 
 def displace(point, pathLength):
@@ -22,14 +23,17 @@ def midpointDisplacement(startPath, iterations, matrix):
         for path in allPaths:
             timeout = 0
             newPoint = (-1,-1)
+            #Get the previous point so we can
             prevPoint = path[j-1]
 
             testPath = None
 
             while not isValid(prevPoint, newPoint, matrix) and timeout < 25:
                 timeout = timeout + 1
-
                 newPoint = displace(path[int(len(path) / 2)], len(path))
+
+            if timeout >= 25:
+                logging.info("Could not find a valid place to displace to in " + logging + " attempts.")
 
             newPointList.append(newPoint)
             newPointList.append(points[j])
