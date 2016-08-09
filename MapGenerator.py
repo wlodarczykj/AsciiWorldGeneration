@@ -72,17 +72,21 @@ def create_land():
                 fullMap[x][y] = 0
     return fullMap
 
+def clear_edges():
+    for x in range(0,4):
+        for y in range(0,4):
+            fullMap[x][y] = 0
+
 logging.info('Starting Map Generation...')
 create_land()
+clear_edges()
 river_gen = river_generator(fullMap)
 fullMap = river_gen.generateRivers(1)
 logging.info('Finished Map Generation...')
 
 for x in range(consts.MAX_MAP_SIZE):
     for y in range(consts.MAX_MAP_SIZE):
-        if x <= 3 or x >= consts.MAX_MAP_SIZE - 3 or y <= 3 or y >= consts.MAX_MAP_SIZE - 3:
-            prettyMap[x][y] = '~'
-        elif fullMap[x][y] == 3:
+        if fullMap[x][y] == 3:
             prettyMap[x][y] = 'X'
         elif fullMap[x][y] == 2:
             prettyMap[x][y] = '^'

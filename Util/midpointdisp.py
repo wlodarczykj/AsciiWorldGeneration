@@ -2,12 +2,13 @@ import random
 import logging
 from util.astar import astar
 
-def displace(point, pathLength):
+def displace(point, pathLength, divisor):
     random.seed()
 
-    xDisp = random.randint(int(pathLength/-2), int(pathLength/2))
-    yDisp = random.randint(int(pathLength/-2), int(pathLength/2))
+    xDisp = random.randint(int(pathLength/(-divisor)), int(pathLength/divisor) + 1)
+    yDisp = random.randint(int(pathLength/(-divisor)), int(pathLength/divisor) + 1)
 
+    logging.info("Displacing by X:" + str(xDisp) + " Y: " + str(yDisp))
     newPoint = (point[0] + xDisp, point[1] + yDisp)
     return newPoint
 
@@ -24,13 +25,13 @@ def midpointDisplacement(startPath, iterations, matrix):
             timeout = 0
             newPoint = (-1,-1)
             #Get the previous point so we can
-            prevPoint = path[j-1]
+            prevPoint = path[int(len(path) / 2) - 1]
 
             testPath = None
 
             while not isValid(prevPoint, newPoint, matrix) and timeout < 25:
                 timeout = timeout + 1
-                newPoint = displace(path[int(len(path) / 2)], len(path))
+                newPoint = displace(path[int(len(path) / 2)], len(path), timeout+1)
 
             if timeout >= 25:
                 logging.info("Could not find a valid place to displace to in " + logging + " attempts.")
@@ -46,7 +47,16 @@ def midpointDisplacement(startPath, iterations, matrix):
         for i in range(0, len(points) - 1):
             allPaths.append(astar(points[i], points[i + 1], matrix))
 
-    return allPaths
+    logging.info("AllPaths: " + str(allPaths))
+    return consolidatePaths(allPaths)
+
+def consolidatePaths(allPaths):
+    retPath = []
+    for path in allPaths:
+        for point in path:
+            retPath.append(point)
+
+    return retPath
 
 def isValid(prevPoint, point, matrix):
     x, y = point

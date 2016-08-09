@@ -53,7 +53,7 @@ class river_generator:
         path = self.findDirectRiver()
 
         if path:
-            #midpointDisplacement(path, consts.MIDPOINT_DISPLACE_ITERATIONS, self.fullMap)
+            path = midpointDisplacement(path, consts.MIDPOINT_DISPLACE_ITERATIONS, self.fullMap)
             for tup in path:
                 x, y = tup
                 self.fullMap[x][y] = 3
