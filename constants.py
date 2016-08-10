@@ -1,9 +1,10 @@
 COLOR_KEY = {
-    '~' : (0,0,255,255),
-    '_' : (0,255,0,255),
+    '~' : (25,25,255,255),
+    '_' : (55,255,55,255),
     '@' : (255,0,0,255),
     '^' : (200,200,200,255),
     'X' : (175,175,0,255),
+    '♣' : (255, 0, 0, 255),
     0 : (0,0,0,255)
 }
 
@@ -14,11 +15,11 @@ PERSISTENCE = 0.35
 SCALE = 15.0
 OCTAVES = 12
 LAND_THRESHOLD = 37
-MOUNTAIN_THRESHOLD = 52
+MOUNTAIN_THRESHOLD = 48
 
 #River Settings
 MIDPOINT_DISPLACE_ITERATIONS = 4
 
 #Image Settings
-FONT_SIZE = 10
+FONT_SIZE = 22
 IMAGE_SIZE = 10 + MAX_MAP_SIZE*(FONT_SIZE)

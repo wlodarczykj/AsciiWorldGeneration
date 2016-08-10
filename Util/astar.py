@@ -92,6 +92,18 @@ def getNeighbors(current, matrix):
 
     return retVal
 
+def nearWater(point, matrix):
+    x, y = point
+    retVal = False
+
+    if matrix[x][y] == 0 or (matrix[x+1][y] == 0 and matrix[x-1][y] == 0 and matrix[x][y+1] == 0 and matrix[x][y-1] == 0):
+        return retVal
+
+    for xChange in range(-1,2):
+        for yChange in range(-1,2):
+            retVal = retVal or (matrix[x + xChange][y + yChange] == 0)
+    return retVal
+
 def reconstruct_path(cameFrom, current):
     total_path = [current]
     while current in cameFrom:

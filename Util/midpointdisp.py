@@ -31,7 +31,7 @@ def midpointDisplacement(startPath, iterations, matrix):
 
             while not isValid(prevPoint, newPoint, matrix) and timeout < 25:
                 timeout = timeout + 1
-                newPoint = displace(path[int(len(path) / 2)], len(path), timeout+1)
+                newPoint = displace(path[int(len(path) / 2)], len(path), timeout+2)
 
             if timeout >= 25:
                 logging.info("Could not find a valid place to displace to in " + logging + " attempts.")
