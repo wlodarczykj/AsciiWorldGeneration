@@ -42,7 +42,7 @@ def prettyPrintMap(matrix):
 
 def makeImage(matrix):
     txt = Image.new('RGBA', (consts.IMAGE_SIZE,consts.IMAGE_SIZE), (10,10,10,255))
-    fnt = ImageFont.truetype('Font/Roboto-black.ttf', consts.FONT_SIZE)
+    fnt = ImageFont.truetype('Font/DF_Mayday_16x16.ttf', consts.FONT_SIZE)
     d = ImageDraw.Draw(txt)
     for x in range(0, consts.MAX_MAP_SIZE):
         for y in range(0, consts.MAX_MAP_SIZE):

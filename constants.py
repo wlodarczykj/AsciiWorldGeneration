@@ -1,6 +1,6 @@
 COLOR_KEY = {
-    '~' : (25,25,255,255),
-    '_' : (55,255,55,255),
+    '~' : (0,0,255,255),
+    '_' : (0,255,0,255),
     '@' : (255,0,0,255),
     '^' : (200,200,200,255),
     'X' : (175,175,0,255),
@@ -15,7 +15,7 @@ PERSISTENCE = 0.35
 SCALE = 15.0
 OCTAVES = 12
 LAND_THRESHOLD = 37
-MOUNTAIN_THRESHOLD = 48
+MOUNTAIN_THRESHOLD = 55
 
 #River Settings
 MIDPOINT_DISPLACE_ITERATIONS = 4
