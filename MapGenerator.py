@@ -54,7 +54,7 @@ def makeImage(matrix):
 
 
 def create_land():
-    scale = 35.0
+    scale = consts.SCALE
     size = len(fullMap)
     seed = random.randint(0,10000)
 
@@ -91,7 +91,7 @@ for x in range(consts.MAX_MAP_SIZE):
         elif fullMap[x][y] == 2:
             prettyMap[x][y] = '^'
         elif fullMap[x][y] == 1:
-            prettyMap[x][y] = '_'
+            prettyMap[x][y] = chr(250)
         else:
             prettyMap[x][y] = '~'
 
