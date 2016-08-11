@@ -28,6 +28,9 @@ from util.midpointdisp import midpointDisplacement
 #MAPS
 fullMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
 prettyMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
+heightMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
+
+SEED = random.randint(0,10000)
 
 #LOGGING
 LOG_FILE = "logs/map_generation.log"
@@ -40,30 +43,41 @@ def prettyPrintMap(matrix):
     table = [fmt.format(*row) for row in s]
     print ('\n'.join(table))
 
-def makeImage(matrix):
-    txt = Image.new('RGBA', (consts.IMAGE_SIZE,consts.IMAGE_SIZE), (10,10,10,255))
+def makeImage(matrix, imageName, isText):
+    if isText:
+        image = Image.new('RGBA', (consts.IMAGE_SIZE, consts.IMAGE_SIZE), (10,10,10,255))
+    else:
+        newSize = int((consts.IMAGE_SIZE - 10)/consts.FONT_SIZE)
+        image = Image.new('RGBA', (newSize, newSize), (10,10,10,255))
+
     fnt = ImageFont.truetype('Font/DF_Mayday_16x16.ttf', consts.FONT_SIZE)
-    d = ImageDraw.Draw(txt)
+    draw = ImageDraw.Draw(image)
+    pixels = image.load()
+
     for x in range(0, consts.MAX_MAP_SIZE):
         for y in range(0, consts.MAX_MAP_SIZE):
             # draw text, full opacity
-            d.text((10 + y*(consts.FONT_SIZE), 10 + x*(consts.FONT_SIZE)), str(matrix[x][y]), font=fnt, fill=consts.COLOR_KEY[matrix[x][y]])
+            if isText:
+                draw.text((10 + y*(consts.FONT_SIZE), 10 + x*(consts.FONT_SIZE)), str(matrix[x][y]), font=fnt, fill=consts.COLOR_KEY[matrix[x][y]])
+            else:
+                trunc = int(matrix[x][y])
+                pixels[x,y] = (trunc, trunc, trunc, 255)
 
-    txt.show()
-    txt.save("result.bmp")
+    image.show()
+    image.save(imageName)
 
 
 def create_land():
     scale = consts.SCALE
     size = len(fullMap)
-    seed = random.randint(0,10000)
 
     for y in range(size):
         for x in range(size):
-            v = pnoise3(x / scale, y / scale, seed, consts.OCTAVES, consts.PERSISTENCE, consts.LACUNARITY)
+            v = pnoise3(x / scale, y / scale, SEED, consts.OCTAVES, consts.PERSISTENCE, consts.LACUNARITY)
             v = (v+1)/2.0
             xScore = v * (size - abs(x - (size/2.0)))
             yScore = v * (size - abs(y - (size/2.0)))
+            heightMap[x][y] = (xScore + yScore) * (255 / (4 * size))
             if xScore >= consts.MOUNTAIN_THRESHOLD and yScore >= consts.MOUNTAIN_THRESHOLD:
                 fullMap[x][y] = 2
             elif xScore >= consts.LAND_THRESHOLD and yScore >= consts.LAND_THRESHOLD:
@@ -95,4 +109,5 @@ for x in range(consts.MAX_MAP_SIZE):
         else:
             prettyMap[x][y] = '~'
 
-makeImage(prettyMap)
+makeImage(prettyMap, "result.bmp", True)
+makeImage(heightMap, "height.bmp", False)
