@@ -10,7 +10,7 @@ If the score falls below a certain acceptance criteria it will be rejected and k
 
 The code currently produces something like the following:
 ###Examples
-![Example](result.bmp)
+![Example](Examples/Land.jpg)
 
 ##Rivers
 ###Algorithm
@@ -21,5 +21,23 @@ one point to the next one.
 
 Then, it takes this path generated and runs a Midpoint Displacement algorithm to
 introduce some randomness.
-###Examples
-![Example](Examples/Rivers/river.bmp)
+
+Currently this is having some issues so the displacement algorithm is disabled.
+
+##Biomes
+###Algorithm
+The idea for biomes is to use moisture and height to determine the Biome to use.
+In the future this will utilize the temperature as well. Temperature being colder in the north and south, and warmer in the middle.
+
+###Height Map
+The height map utilizes the previously run noise algorithm. Therefore, mountains will more likely appear in the center of the map.
+This will most likely change in the future and utilize its own noise algorithm.
+
+The height map is as follows for this example:
+![Example](Examples/height.jpg)
+
+###Moisture Map
+The moisture map uses a new noise function and generates a new map at random.
+
+The moisture map is as follows for this example:
+![Example](Examples/moisture.jpg)
