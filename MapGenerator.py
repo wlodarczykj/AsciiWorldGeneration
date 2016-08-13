@@ -22,6 +22,7 @@ import logging
 from PIL import Image, ImageDraw, ImageFont
 from noise import pnoise3, snoise3
 from generators.river_generator import river_generator
+from generators.biome_generator import biome_generator
 from util.astar import astar
 from util.midpointdisp import midpointDisplacement
 
@@ -30,7 +31,7 @@ fullMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX
 prettyMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
 heightMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
 
-SEED = random.randint(0,10000)
+SEED = random.randint(0,1000000)
 
 #LOGGING
 LOG_FILE = "logs/map_generation.log"
@@ -94,22 +95,26 @@ def clear_edges():
             fullMap[x][y] = 0
 
 logging.info('Starting Map Generation...')
+logging.info('Using seed = ' + str(SEED) + ' for land generation')
+
+#Create Land
 create_land()
 clear_edges()
+
+#Create Rivers
 river_gen = river_generator(fullMap)
 fullMap = river_gen.generateRivers(1)
+
+#Create Biomes
+biome_gen = biome_generator(fullMap)
+biome_gen.generate()
+biome_gen.draw_moisture_map()
+
 logging.info('Finished Map Generation...')
 
 for x in range(consts.MAX_MAP_SIZE):
     for y in range(consts.MAX_MAP_SIZE):
-        if fullMap[x][y] == 3:
-            prettyMap[x][y] = 'X'
-        elif fullMap[x][y] == 2:
-            prettyMap[x][y] = '^'
-        elif fullMap[x][y] == 1:
-            prettyMap[x][y] = chr(250)
-        else:
-            prettyMap[x][y] = '~'
+        prettyMap[x][y] = consts.BIOMES[fullMap[x][y]]
 
 makeImage(prettyMap, "result.bmp", True)
 makeImage(heightMap, "height.bmp", False)
