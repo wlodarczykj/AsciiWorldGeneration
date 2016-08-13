@@ -48,7 +48,7 @@ def makeImage(matrix, imageName, isText):
         image = Image.new('RGBA', (consts.IMAGE_SIZE, consts.IMAGE_SIZE), (10,10,10,255))
     else:
         newSize = int((consts.IMAGE_SIZE - 10)/consts.FONT_SIZE)
-        image = Image.new('RGBA', (newSize, newSize), (10,10,10,255))
+        image = Image.new('RGBA', (consts.IMAGE_SIZE, consts.IMAGE_SIZE), (10,10,10,255))
 
     fnt = ImageFont.truetype('Font/DF_Mayday_16x16.ttf', consts.FONT_SIZE)
     draw = ImageDraw.Draw(image)
@@ -61,7 +61,9 @@ def makeImage(matrix, imageName, isText):
                 draw.text((10 + y*(consts.FONT_SIZE), 10 + x*(consts.FONT_SIZE)), str(matrix[x][y]), font=fnt, fill=consts.COLOR_KEY[matrix[x][y]])
             else:
                 trunc = int(matrix[x][y])
-                pixels[x,y] = (trunc, trunc, trunc, 255)
+                for i in range(0, consts.FONT_SIZE):
+                    for j in range(0, consts.FONT_SIZE):
+                        pixels[x*consts.FONT_SIZE + i, y*consts.FONT_SIZE + j] = (trunc, trunc, trunc, 255)
 
     image.show()
     image.save(imageName)
