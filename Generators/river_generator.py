@@ -19,7 +19,10 @@ class river_generator:
     def nearWater(self, point):
         x, y = point
         retVal = False
-        #TODO: Function name is a bit of a misnomer. Since this returns the applicable river mouths.
+
+        if x + 1 >= len(self.fullMap) or y + 1 >= len(self.fullMap[0]) or x - 1 < 0 or y - 1 < 0:
+            return False
+
         if self.fullMap[x][y] == 0 or (self.fullMap[x+1][y] == 0 and self.fullMap[x-1][y] == 0 and self.fullMap[x][y+1] == 0 and self.fullMap[x][y-1] == 0):
             return retVal
 

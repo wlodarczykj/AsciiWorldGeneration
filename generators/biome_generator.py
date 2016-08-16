@@ -22,7 +22,6 @@ from noise import pnoise3, snoise3
 
 #SEED FOR PERLIN NOISE
 random.seed()
-SEED = random.randint(0,1000000)
 
 #HUMIDITY MAP COLORING
 COLOR = {
@@ -32,28 +31,44 @@ COLOR = {
     3 : (125,255,0,255),
     4 : (0,255,0,255),
     5 : (0,255,255,255),
-    6 : (0,100,255,255)
+    6 : (0,100,255,255),
+    7 : (0,0,255,255)
 }
 
 class biome_generator:
     def __init__(self, mapMatrix):
         self.fullMap = mapMatrix
         self.moisture_map = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
-        logging.info('Using seed = ' + str(SEED) + ' for humidity map generation.')
+        self.height_map = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
 
     def generate(self):
         self.build_moisture_map()
+        self.build_height_map()
+
 
         return self.fullMap
 
     def build_moisture_map(self):
         size = len(self.fullMap)
+        seed = random.randint(0,1000000)
+        logging.info('Using seed = ' + str(seed) + ' for humidity map generation.')
 
         for y in range(size):
             for x in range(size):
-                v = snoise3(x / 17.0, y / 17.0, SEED, consts.OCTAVES, 0.05, 10.0)
-                v = (v + 1) * 3.5
+                v = snoise3(x / 33.0, y / 33.0, seed, 10, 0.37, 4.0)
+                v = (v + 1) * 4
                 self.moisture_map[x][y] = v
+
+    def build_height_map(self):
+        size = len(self.fullMap)
+        seed = random.randint(0,1000000)
+        logging.info('Using seed = ' + str(seed) + ' for height map generation.')
+
+        for y in range(size):
+            for x in range(size):
+                v = snoise3(x / 33.0, y / 33.0, seed, 10, 0.37, 4.0)
+                v = (v + 1)/2.0
+                self.height_map[x][y] = v * 255
 
     def draw_moisture_map(self):
         image = Image.new('RGBA', (consts.IMAGE_SIZE,consts.IMAGE_SIZE), (10,10,10,255))
