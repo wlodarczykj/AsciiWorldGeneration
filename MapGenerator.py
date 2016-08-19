@@ -59,7 +59,7 @@ def makeImage(matrix, imageName, isText):
         for y in range(0, consts.MAX_MAP_SIZE):
             # draw text, full opacity
             if isText:
-                draw.text((10 + y*(consts.FONT_SIZE), 10 + x*(consts.FONT_SIZE)), str(matrix[x][y]), font=fnt, fill=consts.COLOR_KEY[matrix[x][y]])
+                draw.text((10 + y*(consts.FONT_SIZE), 10 + x*(consts.FONT_SIZE)), str(matrix[x][y]), font=fnt, fill=consts.COLOR_KEY[fullMap[x][y]])
             else:
                 trunc = int(matrix[x][y])
                 for i in range(0, consts.FONT_SIZE):
@@ -81,6 +81,7 @@ def create_land():
             xScore = v * (size - abs(x - (size/2.0)))
             yScore = v * (size - abs(y - (size/2.0)))
             heightMap[x][y] = (xScore + yScore) * (255 / (4 * size))
+
             if xScore >= consts.MOUNTAIN_THRESHOLD and yScore >= consts.MOUNTAIN_THRESHOLD:
                 fullMap[x][y] = 2
             elif xScore >= consts.LAND_THRESHOLD and yScore >= consts.LAND_THRESHOLD:
@@ -107,7 +108,7 @@ fullMap = river_gen.generateRivers(1)
 
 #Create Biomes
 biome_gen = biome_generator(fullMap)
-biome_gen.generate()
+fullMap = biome_gen.generate()
 biome_gen.draw_moisture_map()
 
 logging.info('Finished Map Generation...')
@@ -116,5 +117,5 @@ for x in range(consts.MAX_MAP_SIZE):
     for y in range(consts.MAX_MAP_SIZE):
         prettyMap[x][y] = consts.BIOMES[fullMap[x][y]]
 
-makeImage(prettyMap, "result.bmp", True)
-makeImage(heightMap, "height.bmp", False)
+makeImage(prettyMap, "result.jpg", True)
+makeImage(biome_gen.height_map, "height.jpg", False)

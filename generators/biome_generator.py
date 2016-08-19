@@ -45,6 +45,17 @@ class biome_generator:
         self.build_moisture_map()
         self.build_height_map()
 
+        for x in range(0, consts.MAX_MAP_SIZE):
+            for y in range(0, consts.MAX_MAP_SIZE):
+                trunc_biome = int(self.moisture_map[x][y])
+                humidity_biome_selector = trunc_biome / 2
+
+                trunc_height = int(self.height_map[x][y] * (3.0/255.0))
+                height_biome_selector = trunc_height
+
+                select = 10 + int(humidity_biome_selector + (4 * height_biome_selector))
+                if self.fullMap[x][y] == 1:
+                    self.fullMap[x][y] = select
 
         return self.fullMap
 

@@ -3,42 +3,65 @@ BIOMES = {
     0 : '~', #Ocean
     1 : chr(250), #Land
     2 : '^', #Peaks
-    3 : 'X', #Rivers
+    3 : '≈', #Rivers
 
     #High Elevation Biomes
-    10 : 'A', #Snowy
-    11 : 'B', #Tundra
-    12 : 'C', #Bare
-    13 : 'D', #Scorched
+    10 : '▓', #Snowy
+    11 : '•', #Tundra
+    12 : '∞', #Bare
+    13 : '√', #Scorched
 
     #Med-High Biomes
-    13 : 'E', #Taiga
-    14 : 'F', #Shrubland
-    15 : 'G', #Temperate Desert
+    14 : '☼', #Taiga
+    15 : '"', #Shrubland
+    16 : 'Ö', #Temperate Desert
+    17 : 'Ö',
 
     #Med-Low Biomes
-    16 : 'H', #Temperate Rain Forest
-    17 : 'I', #Temperate Deciduous
-    18 : 'J', #Grassland
-    19 : 'K', #Temperate Desert
+    18 : '⌠', #Temperate Rain Forest
+    19 : '♣', #Temperate Deciduous
+    20 : chr(250), #Grassland
+    21 : '~', #Temperate Desert
 
     #Low Biomes
-    20 : 'L', #Tropical Rainforest
-    21 : 'M', #Tropcial Forest
-    22 : 'N', #Grassland
-    23 : 'O', #SubTropical Desert
+    22 : '♠', #Tropical Rainforest
+    23 : 'ô', #Tropical Forest
+    24 : 'ú', #Grassland
+    25 : '~', #SubTropical Desert
 }
 
 
 #Color Key for drawing the map.
 COLOR_KEY = {
-    '~' : (0,0,255,255),
-    chr(250) : (0,200,0,255),
+    0 : (0,0,255,255),
+    1 : (0,200,0,255),
     '@' : (255,0,0,255),
-    '^' : (200,200,200,255),
-    'X' : (175,175,0,255),
-    '♣' : (255, 0, 0, 255),
-    0 : (0,0,0,255)
+    2 : (200,200,200,255),
+    3 : (0,255,255,255),
+
+    #High Elevation Biomes
+    10 : (255, 255, 255, 255), #Snowy
+    11 : (0, 139, 139, 255), #Tundra
+    12 : (155, 155, 155, 255), #Bare
+    13 : (145, 145, 34, 255), #Scorched
+
+    #Med-High Biomes
+    14 : (32,178,170), #Taiga
+    15 : (0, 222, 0, 255), #Shrubland
+    16 : (173,255,47), #Temperate Desert
+    17 : (0, 128, 0, 255), #Temperate Desert♦♣☺☻♥♠
+
+    #Med-Low Biomes
+    18 : (0, 100, 0, 255), #Temperate Rain Forest
+    19 : (34, 139, 34, 255), #Temperate Deciduous
+    20 : (0, 128, 0, 255), #Grassland
+    21 : (255, 255, 0, 255), #Temperate Desert
+
+    #Low Biomes
+    22 : (0, 100, 0, 255), #Tropical Rainforest
+    23 : (54, 145, 54, 255), #Tropcial Forest
+    24 : (50, 205, 50, 255), #Grassland
+    25 : (255, 255, 0, 255) #SubTropical Desert
 }
 
 #Land Settings
