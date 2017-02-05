@@ -1,29 +1,30 @@
 #Biome Dictionary
 BIOMES = {
+    #Special Biomes
     0 : '~', #Ocean
     1 : chr(250), #Land
     2 : '^', #Peaks
     3 : '≈', #Rivers
 
     #High Elevation Biomes
-    10 : ':', #Snowy
+    10 : '+', #Snowy
     11 : '•', #Tundra
     12 : '∞', #Bare
     13 : '√', #Scorched
 
-    #Med-High Biomes
+    #Med-High Elevation Biomes
     14 : '☼', #Taiga
     15 : '"', #Shrubland
     16 : 'Ö', #Temperate Desert
     17 : 'Ö',
 
-    #Med-Low Biomes
+    #Med-Low Elevation Biomes
     18 : '⌠', #Temperate Rain Forest
     19 : '♣', #Temperate Deciduous
     20 : chr(250), #Grassland
     21 : '~', #Temperate Desert
 
-    #Low Biomes
+    #Low Elevation Biomes
     22 : '♠', #Tropical Rainforest
     23 : 'ô', #Tropical Forest
     24 : 'ú', #Grassland
@@ -74,7 +75,7 @@ LAND_THRESHOLD = 37
 MOUNTAIN_THRESHOLD = 60
 
 #River Settings
-MIDPOINT_DISPLACE_ITERATIONS = 4
+MIDPOINT_DISPLACE_ITERATIONS = 2
 
 #Image Settings
 FONT_SIZE = 22

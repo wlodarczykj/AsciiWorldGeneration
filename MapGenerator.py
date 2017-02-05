@@ -1,15 +1,16 @@
 #########
 #
 #   This project is purely for training purposes, and use of it is free to anyone
+#   It generates a world, and tries to create as much detail as possible. There is one
+#   visual output that combines every "map" inside "result.jpg".
 #
 #   Author: Jakub Wlodarczyk
 #
 #   TODO:
-#       1. Need to refactor.
+#       1. Code is getting bigger and slower, need to parallelize where possible.
 #       2. Improve Rivers.
-#       4. Add Civilization.
+#       3. Add Civilization.
 #   NOTE:
-#       1. I wonder how I can make the map bigger and show off more stuff.
 #
 #########
 
@@ -73,7 +74,7 @@ fullMap = land_gen.generateLand()
 
 #Create Rivers
 river_gen = river_generator(fullMap)
-fullMap = river_gen.generateRivers(1)
+fullMap = river_gen.generateRivers(3)
 
 #Create Biomes
 biome_gen = biome_generator(fullMap)
@@ -82,6 +83,7 @@ biome_gen.draw_moisture_map()
 
 logging.info('Finished Map Generation...')
 
+#Let's make it pretty to see what we have.
 for x in range(consts.MAX_MAP_SIZE):
     for y in range(consts.MAX_MAP_SIZE):
         prettyMap[x][y] = consts.BIOMES[fullMap[x][y]]

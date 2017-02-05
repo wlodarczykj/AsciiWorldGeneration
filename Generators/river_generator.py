@@ -53,13 +53,13 @@ class river_generator:
         return path
 
     def generateRivers(self, numRivers):
-        path = self.findDirectRiver()
+        for riverNum in range(numRivers):
+            logging.info('Starting to create river ' + str(riverNum))
+            path = self.findDirectRiver()
 
-        if path:
-            #path = midpointDisplacement(path, consts.MIDPOINT_DISPLACE_ITERATIONS, self.fullMap)
-            for tup in path:
-                x, y = tup
-                self.fullMap[x][y] = 3
-            return self.fullMap
-        else:
-            return self.fullMap
+            if path:
+                path = midpointDisplacement(path, consts.MIDPOINT_DISPLACE_ITERATIONS, self.fullMap)
+                for tup in path:
+                    x, y = tup
+                    self.fullMap[x][y] = 3
+        return self.fullMap
