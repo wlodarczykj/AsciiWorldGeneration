@@ -6,7 +6,7 @@ BIOMES = {
     3 : '≈', #Rivers
 
     #High Elevation Biomes
-    10 : '▓', #Snowy
+    10 : ':', #Snowy
     11 : '•', #Tundra
     12 : '∞', #Bare
     13 : '√', #Scorched
@@ -40,7 +40,7 @@ COLOR_KEY = {
     3 : (0,255,255,255),
 
     #High Elevation Biomes
-    10 : (255, 255, 255, 255), #Snowy
+    10 : (200, 200, 200, 255), #Snowy
     11 : (0, 139, 139, 255), #Tundra
     12 : (155, 155, 155, 255), #Bare
     13 : (145, 145, 34, 255), #Scorched
@@ -61,7 +61,7 @@ COLOR_KEY = {
     22 : (0, 100, 0, 255), #Tropical Rainforest
     23 : (54, 145, 54, 255), #Tropcial Forest
     24 : (50, 205, 50, 255), #Grassland
-    25 : (255, 255, 0, 255) #SubTropical Desert
+    25 : (150, 150, 0, 255) #SubTropical Desert
 }
 
 #Land Settings

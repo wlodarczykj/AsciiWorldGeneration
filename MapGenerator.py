@@ -6,10 +6,8 @@
 #
 #   TODO:
 #       1. Need to refactor.
-#       2. Add Logging.
-#       3. Improve Rivers.
-#       4. Add Biomes.
-#       5. Add Civilization.
+#       2. Improve Rivers.
+#       4. Add Civilization.
 #   NOTE:
 #       1. I wonder how I can make the map bigger and show off more stuff.
 #
@@ -23,6 +21,7 @@ from PIL import Image, ImageDraw, ImageFont
 from noise import pnoise3, snoise3
 from generators.river_generator import river_generator
 from generators.biome_generator import biome_generator
+from generators.land_generator import land_generator
 from util.astar import astar
 from util.midpointdisp import midpointDisplacement
 
@@ -30,8 +29,6 @@ from util.midpointdisp import midpointDisplacement
 fullMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
 prettyMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
 heightMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
-
-SEED = random.randint(0,1000000)
 
 #LOGGING
 LOG_FILE = "logs/map_generation.log"
@@ -69,38 +66,11 @@ def makeImage(matrix, imageName, isText):
     image.show()
     image.save(imageName)
 
-
-def create_land():
-    scale = consts.SCALE
-    size = len(fullMap)
-
-    for y in range(size):
-        for x in range(size):
-            v = pnoise3(x / scale, y / scale, SEED, consts.OCTAVES, consts.PERSISTENCE, consts.LACUNARITY)
-            v = (v+1)/2.0
-            xScore = v * (size - abs(x - (size/2.0)))
-            yScore = v * (size - abs(y - (size/2.0)))
-            heightMap[x][y] = (xScore + yScore) * (255 / (4 * size))
-
-            if xScore >= consts.MOUNTAIN_THRESHOLD and yScore >= consts.MOUNTAIN_THRESHOLD:
-                fullMap[x][y] = 2
-            elif xScore >= consts.LAND_THRESHOLD and yScore >= consts.LAND_THRESHOLD:
-                fullMap[x][y] = 1
-            else:
-                fullMap[x][y] = 0
-    return fullMap
-
-def clear_edges():
-    for x in range(0,4):
-        for y in range(0,4):
-            fullMap[x][y] = 0
-
 logging.info('Starting Map Generation...')
-logging.info('Using seed = ' + str(SEED) + ' for land generation')
 
 #Create Land
-create_land()
-clear_edges()
+land_gen = land_generator(fullMap)
+fullMap = land_gen.generateLand()
 
 #Create Rivers
 river_gen = river_generator(fullMap)
