@@ -22,7 +22,7 @@ SEED = random.randint(0,1000000)
 class land_generator:
     def __init__(self, mapMatrix):
         self.fullMap = mapMatrix
-        self.heightMap = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
+        self.height_map = [[0 for x in range(0,consts.MAX_MAP_SIZE)] for y in range(0,consts.MAX_MAP_SIZE)]
         logging.info('Using seed = ' + str(SEED) + ' for land generation')
 
     def generateLand(self):
@@ -36,7 +36,7 @@ class land_generator:
                 v = (v+1)/2.0
                 xScore = v * (size - abs(x - (size/2.0)))
                 yScore = v * (size - abs(y - (size/2.0)))
-                self.heightMap[x][y] = (xScore + yScore) * (255 / (4 * size))
+                self.height_map[x][y] = (xScore + yScore) * (255 / (4 * size))
 
                 #Determine what is Land vs Mountainous vs Water
                 if xScore >= consts.MOUNTAIN_THRESHOLD and yScore >= consts.MOUNTAIN_THRESHOLD:
@@ -46,3 +46,14 @@ class land_generator:
                 else:
                     self.fullMap[x][y] = 0
         return self.fullMap
+
+    def build_height_map(self):
+        size = len(self.fullMap)
+        seed = random.randint(0,1000000)
+        logging.info('Using seed = ' + str(seed) + ' for height map generation.')
+
+        for y in range(size):
+            for x in range(size):
+                v = snoise3(x / 33.0, y / 33.0, seed, 10, 0.37, 4.0)
+                v = (v + 1)/2.0
+                self.height_map[x][y] = v * 255

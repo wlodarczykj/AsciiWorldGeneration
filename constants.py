@@ -1,4 +1,7 @@
 #Biome Dictionary
+#Biomes are seperated into chunks based on temperature.
+#Each chunk has 4 possibilities based on humidities. Wet, damp, normal, and dry.
+#For example 10, 11, 12, 13 are Cold. 10 is Cold and Wet, 11 is Cold and Damp etc...
 BIOMES = {
     #Special Biomes
     0 : '~', #Ocean
@@ -6,31 +9,31 @@ BIOMES = {
     2 : '^', #Peaks
     3 : '≈', #Rivers
 
-    #High Elevation Biomes
-    10 : '+', #Snowy
-    11 : '•', #Tundra
-    12 : '∞', #Bare
-    13 : '√', #Scorched
+    #Cold Biomes
+    10 : '+', #Wet      - Snowy
+    11 : '•', #Average  - Tundra
+    12 : '∞', #Dry      - Bare
 
-    #Med-High Elevation Biomes
-    14 : '☼', #Taiga
-    15 : '"', #Shrubland
-    16 : 'Ö', #Temperate Desert
-    17 : 'Ö',
+    #Chilly Biomes
+    13 : '☼', #Wet      - Taiga
+    14 : '•', #Average  - Tundra
+    15 : '∞', #Dry      - Bare
 
-    #Med-Low Elevation Biomes
-    18 : '⌠', #Temperate Rain Forest
-    19 : '♣', #Temperate Deciduous
-    20 : chr(250), #Grassland
+    #Temperate Biomes
+    16 : '♣', #Temperate Deciduous
+    17 : '"', #Shrubland
+    18 : "Ö", #Savanna
+
+    #Warmer Biomes
+    19 : '♠', #Tropical Rainforest
+    20 : 'ú', #Grassland
     21 : '~', #Temperate Desert
 
-    #Low Elevation Biomes
-    22 : '♠', #Tropical Rainforest
-    23 : 'ô', #Tropical Forest
-    24 : 'ú', #Grassland
-    25 : '~', #SubTropical Desert
+    #Hot Biomes
+    22 : 'ô', #Tropical Forest
+    23 : '~', #SubTropical Desert
+    24 : '√' #Scorched
 }
-
 
 #Color Key for drawing the map.
 COLOR_KEY = {
@@ -40,37 +43,41 @@ COLOR_KEY = {
     2 : (200,200,200,255),
     3 : (0,255,255,255),
 
-    #High Elevation Biomes
+    #Cold Biomes
     10 : (200, 200, 200, 255), #Snowy
     11 : (0, 139, 139, 255), #Tundra
-    12 : (155, 155, 155, 255), #Bare
-    13 : (145, 145, 34, 255), #Scorched
+    12 : (100, 100, 215, 255), #Bare
 
-    #Med-High Biomes
-    14 : (32,178,170), #Taiga
-    15 : (0, 222, 0, 255), #Shrubland
-    16 : (173,255,47), #Temperate Desert
-    17 : (0, 128, 0, 255), #Temperate Desert♦♣☺☻♥♠
+    #Chilly Biomes
+    13 : (32,178,170), #Taiga
+    14 : (0, 139, 139, 255), #Tundra
+    15 : (155, 155, 155, 255), #Bare
 
-    #Med-Low Biomes
-    18 : (0, 100, 0, 255), #Temperate Rain Forest
-    19 : (34, 139, 34, 255), #Temperate Deciduous
-    20 : (0, 128, 0, 255), #Grassland
-    21 : (255, 255, 0, 255), #Temperate Desert
+    #Temperate Biomes
+    16 : (34, 124, 34, 255), #Temperate Deciduous
+    17 : (0, 222, 0, 255), #Shrubland
+    18 : (165, 80, 80, 255), #Savanna
 
-    #Low Biomes
-    22 : (0, 100, 0, 255), #Tropical Rainforest
-    23 : (54, 145, 54, 255), #Tropcial Forest
-    24 : (50, 205, 50, 255), #Grassland
-    25 : (150, 150, 0, 255) #SubTropical Desert
+    #Warm Biomes
+    19 : (0, 100, 0, 255), #Tropical Rainforest
+    20 : (50, 255, 50, 255), #Grassland
+    21 : (173,173,47), #Temperate Desert
+
+    #Hot Biomes
+    22 : (54, 145, 54, 255), #Tropcial Forest
+    23 : (150, 150, 0, 255), #SubTropical Desert
+    24 : (145, 145, 34, 255) #Scorched
+
+
+
 }
 
 #Land Settings
 MAX_MAP_SIZE = 100
-LACUNARITY = 5.0
-PERSISTENCE = 0.23
+LACUNARITY = 3.0
+PERSISTENCE = 0.31
 SCALE = 10.0
-OCTAVES = 10
+OCTAVES = 4
 LAND_THRESHOLD = 37
 MOUNTAIN_THRESHOLD = 60
 

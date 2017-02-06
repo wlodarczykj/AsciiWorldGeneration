@@ -19,7 +19,6 @@ import sys
 import constants as consts
 import logging
 from PIL import Image, ImageDraw, ImageFont
-from noise import pnoise3, snoise3
 from generators.river_generator import river_generator
 from generators.biome_generator import biome_generator
 from generators.land_generator import land_generator
@@ -56,7 +55,7 @@ def makeImage(matrix, imageName, isText):
         for y in range(0, consts.MAX_MAP_SIZE):
             # draw text, full opacity
             if isText:
-                draw.text((10 + y*(consts.FONT_SIZE), 10 + x*(consts.FONT_SIZE)), str(matrix[x][y]), font=fnt, fill=consts.COLOR_KEY[fullMap[x][y]])
+                draw.text((10 + x*(consts.FONT_SIZE), 10 + y*(consts.FONT_SIZE)), str(matrix[x][y]), font=fnt, fill=consts.COLOR_KEY[fullMap[x][y]])
             else:
                 trunc = int(matrix[x][y])
                 for i in range(0, consts.FONT_SIZE):
@@ -80,6 +79,7 @@ fullMap = river_gen.generateRivers(3)
 biome_gen = biome_generator(fullMap)
 fullMap = biome_gen.generate()
 biome_gen.draw_moisture_map()
+biome_gen.draw_temperature_map()
 
 logging.info('Finished Map Generation...')
 
@@ -89,4 +89,4 @@ for x in range(consts.MAX_MAP_SIZE):
         prettyMap[x][y] = consts.BIOMES[fullMap[x][y]]
 
 makeImage(prettyMap, "result.jpg", True)
-makeImage(biome_gen.height_map, "height.jpg", False)
+makeImage(land_gen.height_map, "height.jpg", False)
